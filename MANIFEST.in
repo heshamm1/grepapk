@@ -1,0 +1,69 @@
+# Include README and documentation
+include README.md
+include LICENSE
+include banner.txt
+include requirements.txt
+
+# Include Python source files
+include *.py
+recursive-include * *.py
+
+# Include configuration files
+include *.yaml
+include *.yml
+include *.cfg
+include *.ini
+include *.json
+
+# Include pattern files
+include config/vulnerability_patterns*.py
+include config/false_positive_config.py
+
+# Include scanner files
+include config/regex_scanner*.py
+include config/ai_scanner.py
+
+# Include utility files
+include config/output_manager.py
+include config/help_banner.py
+
+# Include main files
+include config/grepapk_main.py
+include config/ai_vulnerability_detector.py
+include config/__init__.py
+
+# Include test files
+recursive-include tests *.py
+recursive-include tests *.txt
+recursive-include tests *.json
+
+# Include examples
+recursive-include examples *.py
+recursive-include examples *.txt
+recursive-include examples *.json
+
+# Exclude build and cache files
+global-exclude *.pyc
+global-exclude *.pyo
+global-exclude *.pyd
+global-exclude __pycache__
+global-exclude *.so
+global-exclude *.dll
+global-exclude *.dylib
+global-exclude .git*
+global-exclude .svn*
+global-exclude .DS_Store
+global-exclude *.log
+global-exclude *.tmp
+global-exclude *.bak
+global-exclude build/
+global-exclude dist/
+global-exclude *.egg-info/
+global-exclude .pytest_cache/
+global-exclude .coverage
+global-exclude htmlcov/
+global-exclude .tox/
+global-exclude .venv/
+global-exclude venv/
+global-exclude env/
+global-exclude .env

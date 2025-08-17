@@ -1,0 +1,262 @@
+[build-system]
+requires = [
+    "setuptools>=45.0.0",
+    "wheel>=0.37.0",
+    "setuptools_scm[toml]>=6.2",
+]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "grepapk"
+dynamic = ["version"]
+description = "Android APK Security Scanner with AI-powered vulnerability detection"
+readme = "README.md"
+license = {text = "MIT"}
+authors = [
+    {name = "GrepAPK Security Team", email = "security@grepapk.com"},
+]
+maintainers = [
+    {name = "GrepAPK Security Team", email = "maintainers@grepapk.com"},
+]
+keywords = [
+    "android", "apk", "security", "vulnerability", "scanner",
+    "static-analysis", "penetration-testing", "mobile-security",
+    "regex", "ai", "machine-learning", "code-analysis"
+]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Information Technology",
+    "Intended Audience :: System Administrators",
+    "Intended Audience :: Security Analysts",
+    "Intended Audience :: Penetration Testers",
+    "Topic :: Security",
+    "Topic :: Software Development :: Quality Assurance",
+    "Topic :: Software Development :: Testing",
+    "Topic :: System :: Security",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Operating System :: OS Independent",
+    "Operating System :: Microsoft :: Windows",
+    "Operating System :: POSIX :: Linux",
+    "Operating System :: MacOS",
+    "Environment :: Console",
+    "Framework :: Click",
+    "Typing :: Typed",
+]
+requires-python = ">=3.8"
+dependencies = [
+    "click>=8.0.0",
+    "pathlib2>=2.3.0; python_version<'3.4'",
+    "concurrent-futures>=3.1.1; python_version<'3.2'",
+    "typing-extensions>=4.0.0; python_version<'3.8'",
+    "colorama>=0.4.4",
+    "rich>=12.0.0",
+    "tqdm>=4.64.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0.0",
+    "pytest-cov>=4.0.0",
+    "black>=22.0.0",
+    "flake8>=5.0.0",
+    "mypy>=1.0.0",
+    "pre-commit>=2.20.0",
+]
+ai = [
+    "torch>=1.12.0",
+    "transformers>=4.20.0",
+    "tokenizers>=0.13.0",
+    "numpy>=1.21.0",
+    "scikit-learn>=1.1.0",
+]
+full = [
+    "torch>=1.12.0",
+    "transformers>=4.20.0",
+    "tokenizers>=0.13.0",
+    "numpy>=1.21.0",
+    "scikit-learn>=1.1.0",
+    "pytest>=7.0.0",
+    "pytest-cov>=4.0.0",
+    "black>=22.0.0",
+    "flake8>=5.0.0",
+    "mypy>=1.0.0",
+    "pre-commit>=2.20.0",
+]
+
+[project.urls]
+Homepage = "https://github.com/grepapk/grepapk"
+Documentation = "https://github.com/grepapk/grepapk/blob/main/README.md"
+Repository = "https://github.com/grepapk/grepapk"
+"Bug Tracker" = "https://github.com/grepapk/grepapk/issues"
+"Security Policy" = "https://github.com/grepapk/grepapk/security/policy"
+"Security Advisories" = "https://github.com/grepapk/grepapk/security/advisories"
+"Bug Bounty" = "https://github.com/grepapk/grepapk/security/advisories"
+"Responsible Disclosure" = "https://github.com/grepapk/grepapk/security/policy"
+"Download" = "https://github.com/grepapk/grepapk/releases"
+
+[project.scripts]
+grepapk = "config.grepapk_main:main"
+grepapk-scan = "config.grepapk_main:main"
+
+[project.gui-scripts]
+
+[project.entry-points."console_scripts"]
+grepapk = "config.grepapk_main:main"
+grepapk-scan = "config.grepapk_main:main"
+
+[project.entry-points."grepapk.scanners"]
+regex = "regex_scanner:RegexScanner"
+enhanced_regex = "regex_scanner_enhanced:EnhancedRegexScanner"
+ai = "ai_scanner:AIScanner"
+
+[project.entry-points."grepapk.patterns"]
+vulnerability = "vulnerability_patterns:get_patterns"
+improved = "vulnerability_patterns_improved:get_patterns"
+
+[tool.setuptools]
+packages = ["grepapk", "config"]
+py-modules = [
+    "config.grepapk_main",
+    "config.vulnerability_patterns",
+    "config.vulnerability_patterns_improved",
+    "config.regex_scanner",
+    "config.regex_scanner_enhanced",
+    "config.ai_scanner",
+    "config.output_manager",
+    "config.help_banner",
+    "config.false_positive_config"
+]
+
+[tool.setuptools.package-data]
+"*" = ["*.txt", "*.md", "*.yaml", "*.yml", "*.json", "*.xml", "*.cfg", "*.ini"]
+
+[tool.setuptools.data-files]
+"share/grepapk" = [
+    "banner.txt",
+    "README.md",
+    "requirements.txt"
+]
+"share/grepapk/config" = [
+    "config/__init__.py",
+    "config/grepapk_main.py",
+    "config/ai_vulnerability_detector.py",
+    "config/false_positive_config.py"
+]
+"share/grepapk/config/patterns" = [
+    "config/vulnerability_patterns.py",
+    "config/vulnerability_patterns_improved.py"
+]
+"share/grepapk/config/scanners" = [
+    "config/regex_scanner.py",
+    "config/regex_scanner_enhanced.py",
+    "config/ai_scanner.py"
+]
+"share/grepapk/config/utils" = [
+    "config/output_manager.py",
+    "config/help_banner.py"
+]
+
+[tool.setuptools.dynamic]
+version = {attr = "grepapk.__version__"}
+
+[tool.setuptools.packages.find]
+include = ["*"]
+
+[tool.setuptools.packages.find.where]
+src = "."
+
+[tool.setuptools.packages.find.exclude]
+"tests*" = true
+"examples*" = true
+
+[tool.black]
+line-length = 88
+target-version = ['py38', 'py39', 'py310', 'py311', 'py312']
+include = '\.pyi?$'
+extend-exclude = '''
+/(
+  # directories
+  \.eggs
+  | \.git
+  | \.hg
+  | \.mypy_cache
+  | \.tox
+  | \.venv
+  | build
+  | dist
+)/
+'''
+
+[tool.isort]
+profile = "black"
+multi_line_output = 3
+line_length = 88
+known_first_party = ["grepapk"]
+known_third_party = ["click", "pathlib", "concurrent", "typing", "colorama", "rich", "tqdm"]
+
+[tool.mypy]
+python_version = "3.8"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = true
+disallow_incomplete_defs = true
+check_untyped_defs = true
+disallow_untyped_decorators = true
+no_implicit_optional = true
+warn_redundant_casts = true
+warn_unused_ignores = true
+warn_no_return = true
+warn_unreachable = true
+strict_equality = true
+
+[tool.pytest.ini_options]
+minversion = "7.0"
+addopts = "-ra -q --strict-markers --strict-config"
+testpaths = ["tests"]
+python_files = ["test_*.py", "*_test.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+markers = [
+    "slow: marks tests as slow (deselect with '-m \"not slow\"')",
+    "integration: marks tests as integration tests",
+    "unit: marks tests as unit tests",
+    "ai: marks tests that require AI dependencies",
+    "regex: marks tests that test regex functionality",
+]
+
+[tool.coverage.run]
+source = ["grepapk"]
+omit = [
+    "*/tests/*",
+    "*/test_*",
+    "*/__pycache__/*",
+    "*/venv/*",
+    "*/env/*",
+    "*/.venv/*",
+]
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "if self.debug:",
+    "if settings.DEBUG",
+    "raise AssertionError",
+    "raise NotImplementedError",
+    "if 0:",
+    "if __name__ == .__main__.:",
+    "class .*\\bProtocol\\):",
+    "@(abc\\.)?abstractmethod",
+]
+
+[tool.coverage.html]
+directory = "htmlcov"
+
+[tool.coverage.xml]
+output = "coverage.xml"
