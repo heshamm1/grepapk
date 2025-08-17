@@ -6,11 +6,12 @@
   <em>Advanced Android APK Security Scanner</em>
 </div>
 
+<div align="center">
 [![Python](https://img.shields.io/badge/Python-3.8+-blue.svg)](https://www.python.org/downloads/)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 [![Version](https://img.shields.io/badge/Version-1.0-orange.svg)](https://github.com/heshamm1/grepapk)
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen.svg)](https://developer.android.com/)
-
+</div>
 > **Comprehensive vulnerability detection using AI and regex patterns**
 
 ## 📋 Table of Contents
