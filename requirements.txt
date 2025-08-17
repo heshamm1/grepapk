@@ -1,14 +1,17 @@
-# Core Dependencies
-click==8.1.7
-colorama==0.4.6
-pathlib2==2.3.7
+# Core dependencies for GrepAPK v3.0
+click>=8.0.0
+pathlib
+colorama
 
-# AI Model Dependencies
+# AI and Machine Learning dependencies
 torch>=1.9.0
-transformers>=4.21.0
-tokenizers>=0.13.0
+transformers>=4.20.0
+tokenizers>=0.12.0
 numpy>=1.21.0
 scikit-learn>=1.0.0
-datasets>=2.0.0
-accelerate>=0.20.0
+
+# Additional utilities
+requests>=2.25.0
+tqdm>=4.60.0
+regex>=2021.0.0
 
