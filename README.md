@@ -25,7 +25,6 @@
 - [Output Formats](#output-formats)
 - [Configuration](#configuration)
 - [Examples](#examples)
-- [Contributing](#contributing)
 - [License](#license)
 
 ## 🎯 Overview
