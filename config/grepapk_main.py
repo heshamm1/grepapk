@@ -144,7 +144,13 @@ class GrepAPKController:
             'detected_framework': 'Unknown',
             'build_system': 'Unknown',
             'programming_languages': [],
-            'rasp_controls': []
+            'rasp_controls': [],
+            'package_info': {},
+            'security_features': [],
+            'target_sdk': 'Unknown',
+            'min_sdk': 'Unknown',
+            'permissions': [],
+            'exported_components': []
         }
         
         try:
@@ -165,6 +171,7 @@ class GrepAPKController:
             java_files = list(directory_path.rglob('*.java'))
             kotlin_files = list(directory_path.rglob('*.kt'))
             smali_files = list(directory_path.rglob('*.smali'))
+            xml_files = list(directory_path.rglob('*.xml'))
             
             if java_files:
                 framework_results['programming_languages'].append('Java')
@@ -172,28 +179,120 @@ class GrepAPKController:
                 framework_results['programming_languages'].append('Kotlin')
             if smali_files:
                 framework_results['programming_languages'].append('Smali')
+            if xml_files:
+                framework_results['programming_languages'].append('XML')
             
-            # Check for RASP controls
-            rasp_indicators = [
-                'rootbeer', 'rootcloak', 'magisk', 'xposed', 'frida',
-                'anti_debug', 'anti_tamper', 'code_integrity'
-            ]
+            # Enhanced RASP controls detection
+            rasp_indicators = {
+                'root_detection': ['rootbeer', 'rootcloak', 'magisk', 'supersu', 'kingroot', 'rootchecker'],
+                'anti_debug': ['anti_debug', 'debuggable', 'isdebuggerconnected', 'debuggable_check'],
+                'anti_tamper': ['anti_tamper', 'integrity_check', 'signature_verify', 'checksum_verify'],
+                'anti_vm': ['emulator_check', 'virtual_machine', 'genymotion', 'bluestacks'],
+                'code_obfuscation': ['proguard', 'r8', 'obfuscation', 'string_encryption'],
+                'hook_detection': ['xposed', 'frida', 'substrate', 'cydia', 'hook_detection'],
+                'certificate_pinning': ['ssl_pinning', 'certificate_pinning', 'network_security_config'],
+                'jailbreak_detection': ['jailbreak', 'cydia', 'sileo', 'unc0ver', 'checkra1n']
+            }
             
+            # Enhanced security features detection
+            security_features = {
+                'biometric_auth': ['biometric', 'fingerprint', 'face_recognition', 'biometric_prompt'],
+                'encryption': ['aes', 'rsa', 'sha256', 'encryption', 'cipher'],
+                'secure_storage': ['keystore', 'encrypted_shared_prefs', 'encrypted_database'],
+                'network_security': ['network_security_config', 'cleartext_traffic', 'ssl_error_handler'],
+                'app_signing': ['v1_signing', 'v2_signing', 'v3_signing', 'apk_signer']
+            }
+            
+            # Analyze files for RASP controls and security features
             for root, dirs, files in os.walk(directory):
                 for file in files:
-                    if file.endswith(('.java', '.kt', '.xml')):
+                    if file.endswith(('.java', '.kt', '.xml', '.smali')):
                         file_path = Path(root) / file
                         try:
                             with open(file_path, 'r', encoding='utf-8', errors='ignore') as f:
                                 content = f.read().lower()
-                                for indicator in rasp_indicators:
-                                    if indicator in content:
-                                        framework_results['rasp_controls'].append(indicator)
+                                
+                                # Check RASP controls
+                                for category, indicators in rasp_indicators.items():
+                                    for indicator in indicators:
+                                        if indicator in content:
+                                            if indicator not in framework_results['rasp_controls']:
+                                                framework_results['rasp_controls'].append(indicator)
+                                
+                                # Check security features
+                                for category, indicators in security_features.items():
+                                    for indicator in indicators:
+                                        if indicator in content:
+                                            if category not in framework_results['security_features']:
+                                                framework_results['security_features'].append(category)
+                                                
                         except:
                             continue
             
             # Remove duplicates
             framework_results['rasp_controls'] = list(set(framework_results['rasp_controls']))
+            framework_results['security_features'] = list(set(framework_results['security_features']))
+            
+            # Try to extract package info from manifest
+            manifest_files = list(directory_path.rglob('AndroidManifest.xml'))
+            for manifest in manifest_files:
+                try:
+                    with open(manifest, 'r', encoding='utf-8', errors='ignore') as f:
+                        content = f.read()
+                        
+                        # Extract package name
+                        import re
+                        package_match = re.search(r'package=["\']([^"\']+)["\']', content)
+                        if package_match:
+                            framework_results['package_info']['package_name'] = package_match.group(1)
+                        
+                        # Extract target SDK
+                        target_sdk_match = re.search(r'android:targetSdkVersion=["\']([^"\']+)["\']', content)
+                        if target_sdk_match:
+                            framework_results['target_sdk'] = target_sdk_match.group(1)
+                        
+                        # Extract min SDK
+                        min_sdk_match = re.search(r'android:minSdkVersion=["\']([^"\']+)["\']', content)
+                        if min_sdk_match:
+                            framework_results['min_sdk'] = min_sdk_match.group(1)
+                        
+                        # Extract permissions
+                        permission_matches = re.findall(r'<uses-permission[^>]*android:name=["\']([^"\']+)["\']', content)
+                        framework_results['permissions'].extend(permission_matches)
+                        
+                        # Extract exported components
+                        exported_activities = re.findall(r'<activity[^>]*android:exported=["\']true["\'][^>]*android:name=["\']([^"\']+)["\']', content)
+                        exported_services = re.findall(r'<service[^>]*android:exported=["\']true["\'][^>]*android:name=["\']([^"\']+)["\']', content)
+                        exported_receivers = re.findall(r'<receiver[^>]*android:exported=["\']true["\'][^>]*android:name=["\']([^"\']+)["\']', content)
+                        exported_providers = re.findall(r'<provider[^>]*android:exported=["\']true["\'][^>]*android:name=["\']([^"\']+)["\']', content)
+                        
+                        framework_results['exported_components'] = {
+                            'activities': exported_activities,
+                            'services': exported_services,
+                            'receivers': exported_receivers,
+                            'providers': exported_providers
+                        }
+                        
+                except:
+                    continue
+            
+            # Remove duplicate permissions
+            framework_results['permissions'] = list(set(framework_results['permissions']))
+            
+            # Determine framework based on file analysis
+            if smali_files:
+                if len(smali_files) > 1000:  # Large number of smali files suggests complex app
+                    framework_results['detected_framework'] = 'Android Native (Decompiled)'
+                else:
+                    framework_results['detected_framework'] = 'Android Native (Simple)'
+            
+            # Check for specific frameworks
+            androidx_files = list(directory_path.rglob('*androidx*'))
+            support_files = list(directory_path.rglob('*support*'))
+            if androidx_files:
+                framework_results['detected_framework'] = 'AndroidX'
+            elif support_files:
+                framework_results['detected_framework'] = 'Android Support Library'
             
         except Exception as e:
             if self.verbose:
@@ -207,12 +306,17 @@ class GrepAPKController:
             'total_files': 0,
             'file_types': {},
             'directories': [],
-            'manifest_files': []
+            'manifest_files': [],
+            'security_analysis': {},
+            'resource_analysis': {},
+            'code_analysis': {},
+            'size_analysis': {}
         }
         
         try:
             directory_path = Path(directory)
             
+            # File counting and analysis
             for root, dirs, files in os.walk(directory):
                 structure_results['total_files'] += len(files)
                 
@@ -229,6 +333,143 @@ class GrepAPKController:
             
             # Remove duplicates
             structure_results['directories'] = list(set(structure_results['directories']))
+            
+            # Enhanced security analysis
+            security_analysis = {
+                'native_libraries': [],
+                'webview_files': [],
+                'database_files': [],
+                'certificate_files': [],
+                'configuration_files': []
+            }
+            
+            # Check for native libraries
+            native_exts = ['.so', '.dll', '.dylib']
+            for ext in native_exts:
+                native_files = list(directory_path.rglob(f'*{ext}'))
+                if native_files:
+                    security_analysis['native_libraries'].extend([str(f) for f in native_files])
+            
+            # Check for WebView related files
+            webview_patterns = ['webview', 'javascript', 'html', 'css', 'js']
+            for pattern in webview_patterns:
+                webview_files = list(directory_path.rglob(f'*{pattern}*'))
+                if webview_files:
+                    security_analysis['webview_files'].extend([str(f) for f in webview_files])
+            
+            # Check for database files
+            db_exts = ['.db', '.sqlite', '.sqlite3']
+            for ext in db_exts:
+                db_files = list(directory_path.rglob(f'*{ext}'))
+                if db_files:
+                    security_analysis['database_files'].extend([str(f) for f in db_files])
+            
+            # Check for certificate files
+            cert_exts = ['.cer', '.crt', '.pem', '.p12', '.keystore', '.jks']
+            for ext in cert_exts:
+                cert_files = list(directory_path.rglob(f'*{ext}'))
+                if cert_files:
+                    security_analysis['certificate_files'].extend([str(f) for f in cert_files])
+            
+            # Check for configuration files
+            config_patterns = ['config', 'properties', 'ini', 'conf', 'cfg']
+            for pattern in config_patterns:
+                config_files = list(directory_path.rglob(f'*{pattern}*'))
+                if config_files:
+                    security_analysis['configuration_files'].extend([str(f) for f in config_files])
+            
+            # Remove duplicates from security analysis
+            for key in security_analysis:
+                security_analysis[key] = list(set(security_analysis[key]))
+            
+            structure_results['security_analysis'] = security_analysis
+            
+            # Resource analysis
+            resource_analysis = {
+                'drawable_resources': 0,
+                'layout_resources': 0,
+                'value_resources': 0,
+                'raw_resources': 0,
+                'asset_resources': 0
+            }
+            
+            # Count resource types
+            drawable_dirs = [d for d in structure_results['directories'] if 'drawable' in d.lower()]
+            layout_dirs = [d for d in structure_results['directories'] if 'layout' in d.lower()]
+            value_dirs = [d for d in structure_results['directories'] if 'values' in d.lower()]
+            raw_dirs = [d for d in structure_results['directories'] if 'raw' in d.lower()]
+            asset_dirs = [d for d in structure_results['directories'] if 'assets' in d.lower()]
+            
+            resource_analysis['drawable_resources'] = len(drawable_dirs)
+            resource_analysis['layout_resources'] = len(layout_dirs)
+            resource_analysis['value_resources'] = len(value_dirs)
+            resource_analysis['raw_resources'] = len(raw_dirs)
+            resource_analysis['asset_resources'] = len(asset_dirs)
+            
+            structure_results['resource_analysis'] = resource_analysis
+            
+            # Code analysis
+            code_analysis = {
+                'smali_classes': 0,
+                'java_files': 0,
+                'kotlin_files': 0,
+                'xml_files': 0,
+                'dex_files': 0
+            }
+            
+            # Count code files
+            code_analysis['smali_classes'] = structure_results['file_types'].get('.smali', 0)
+            code_analysis['java_files'] = structure_results['file_types'].get('.java', 0)
+            code_analysis['kotlin_files'] = structure_results['file_types'].get('.kt', 0)
+            code_analysis['xml_files'] = structure_results['file_types'].get('.xml', 0)
+            
+            # Check for DEX files
+            dex_dirs = [d for d in structure_results['directories'] if 'smali_classes' in d.lower()]
+            code_analysis['dex_files'] = len(dex_dirs)
+            
+            structure_results['code_analysis'] = code_analysis
+            
+            # Size analysis
+            size_analysis = {
+                'total_size_mb': 0,
+                'largest_files': [],
+                'file_size_distribution': {}
+            }
+            
+            # Calculate total size and find largest files
+            total_size = 0
+            file_sizes = []
+            
+            for root, dirs, files in os.walk(directory):
+                for file in files:
+                    try:
+                        file_path = Path(root) / file
+                        file_size = file_path.stat().st_size
+                        total_size += file_size
+                        file_sizes.append((str(file_path), file_size))
+                    except:
+                        continue
+            
+            size_analysis['total_size_mb'] = round(total_size / (1024 * 1024), 2)
+            
+            # Get top 10 largest files
+            file_sizes.sort(key=lambda x: x[1], reverse=True)
+            size_analysis['largest_files'] = [(f[0], round(f[1] / 1024, 2)) for f in file_sizes[:10]]
+            
+            # File size distribution
+            size_ranges = {
+                'tiny': (0, 1024),      # 0-1KB
+                'small': (1024, 10240),  # 1-10KB
+                'medium': (10240, 102400), # 10-100KB
+                'large': (102400, 1048576), # 100KB-1MB
+                'huge': (1048576, float('inf')) # 1MB+
+            }
+            
+            for size_name, (min_size, max_size) in size_ranges.items():
+                count = sum(1 for _, size in file_sizes if min_size <= size < max_size)
+                size_analysis['file_size_distribution'][size_name] = count
+            
+            structure_results['size_analysis'] = size_analysis
             
         except Exception as e:
             if self.verbose:

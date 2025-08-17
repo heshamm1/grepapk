@@ -314,27 +314,218 @@ class OutputManager:
         """Save scan results to file in the specified format."""
         # Set the output format
         self.output_format = output_format.lower()
+
+        # Check if this is a tiny scan (framework analysis)
+        if results.get('scan_type') == 'TINY':
+            return self._save_tiny_scan_results(results, output_name)
         
         # Extract vulnerabilities from results
         vulnerabilities = results.get('vulnerabilities', [])
         self.vulnerabilities = vulnerabilities
-        
+
         # Generate output content
         output_content = self.generate_output()
-        
+
         # Determine output filename
         if output_format.lower() == 'json':
             output_filename = f"{output_name}.json"
         else:
             output_filename = f"{output_name}.txt"
-        
+
         # Save to file
         output_path = Path(output_filename)
         try:
             with open(output_path, 'w', encoding='utf-8') as f:
                 f.write(output_content)
-            
+
             return str(output_path.absolute())
-            
+
         except Exception as e:
             raise Exception(f"Failed to save results to {output_filename}: {e}")
+
+    def _save_tiny_scan_results(self, results: Dict[str, Any], output_name: str) -> str:
+        """Save tiny scan results (framework and structure analysis)."""
+        if self.output_format == 'json':
+            return self._save_tiny_scan_json(results, output_name)
+        else:
+            return self._save_tiny_scan_txt(results, output_name)
+
+    def _save_tiny_scan_json(self, results: Dict[str, Any], output_name: str) -> str:
+        """Save tiny scan results in JSON format."""
+        output_filename = f"{output_name}.json"
+        output_path = Path(output_filename)
+        
+        try:
+            with open(output_path, 'w', encoding='utf-8') as f:
+                json.dump(results, f, indent=2, ensure_ascii=False)
+            
+            return str(output_path.absolute())
+        except Exception as e:
+            raise Exception(f"Failed to save tiny scan results to {output_filename}: {e}")
+
+    def _save_tiny_scan_txt(self, results: Dict[str, Any], output_name: str) -> str:
+        """Save tiny scan results in text format."""
+        output_filename = f"{output_name}.txt"
+        output_path = Path(output_filename)
+        
+        try:
+            output_content = self._generate_tiny_scan_txt_output(results)
+            
+            with open(output_path, 'w', encoding='utf-8') as f:
+                f.write(output_content)
+            
+            return str(output_path.absolute())
+        except Exception as e:
+            raise Exception(f"Failed to save tiny scan results to {output_filename}: {e}")
+
+    def _generate_tiny_scan_txt_output(self, results: Dict[str, Any]) -> str:
+        """Generate text output for tiny scan results."""
+        output_lines = []
+        output_lines.append("=" * 80)
+        output_lines.append("🔒 GREPAPK TINY SCAN REPORT - FRAMEWORK & STRUCTURE ANALYSIS")
+        output_lines.append("=" * 80)
+        output_lines.append(f"Scan Date: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+        output_lines.append(f"Directory: {results.get('directory', 'Unknown')}")
+        output_lines.append("")
+        
+        # Framework Analysis Section
+        framework_analysis = results.get('framework_analysis', {})
+        output_lines.append("🏗️  FRAMEWORK ANALYSIS")
+        output_lines.append("-" * 60)
+        output_lines.append(f"Detected Framework: {framework_analysis.get('detected_framework', 'Unknown')}")
+        output_lines.append(f"Build System: {framework_analysis.get('build_system', 'Unknown')}")
+        output_lines.append(f"Target SDK: {framework_analysis.get('target_sdk', 'Unknown')}")
+        output_lines.append(f"Min SDK: {framework_analysis.get('min_sdk', 'Unknown')}")
+        
+        # Programming Languages
+        languages = framework_analysis.get('programming_languages', [])
+        if languages:
+            output_lines.append(f"Programming Languages: {', '.join(languages)}")
+        
+        # Package Info
+        package_info = framework_analysis.get('package_info', {})
+        if package_info.get('package_name'):
+            output_lines.append(f"Package Name: {package_info['package_name']}")
+        
+        # RASP Controls
+        rasp_controls = framework_analysis.get('rasp_controls', [])
+        if rasp_controls:
+            output_lines.append(f"RASP Controls Detected: {', '.join(rasp_controls)}")
+        
+        # Security Features
+        security_features = framework_analysis.get('security_features', [])
+        if security_features:
+            output_lines.append(f"Security Features: {', '.join(security_features)}")
+        
+        # Permissions
+        permissions = framework_analysis.get('permissions', [])
+        if permissions:
+            output_lines.append(f"Total Permissions: {len(permissions)}")
+            output_lines.append("Key Permissions:")
+            for perm in permissions[:10]:  # Show first 10 permissions
+                output_lines.append(f"  - {perm}")
+            if len(permissions) > 10:
+                output_lines.append(f"  ... and {len(permissions) - 10} more")
+        
+        # Exported Components
+        exported_components = framework_analysis.get('exported_components', {})
+        if exported_components:
+            output_lines.append("Exported Components:")
+            for comp_type, comps in exported_components.items():
+                if comps:
+                    output_lines.append(f"  {comp_type.title()}: {len(comps)}")
+                    for comp in comps[:5]:  # Show first 5 of each type
+                        output_lines.append(f"    - {comp}")
+                    if len(comps) > 5:
+                        output_lines.append(f"    ... and {len(comps) - 5} more")
+        
+        output_lines.append("")
+        
+        # Structure Analysis Section
+        structure_analysis = results.get('structure_analysis', {})
+        output_lines.append("📁 STRUCTURE ANALYSIS")
+        output_lines.append("-" * 60)
+        output_lines.append(f"Total Files: {structure_analysis.get('total_files', 0):,}")
+        
+        # File Types
+        file_types = structure_analysis.get('file_types', {})
+        if file_types:
+            output_lines.append("File Types:")
+            sorted_types = sorted(file_types.items(), key=lambda x: x[1], reverse=True)
+            for ext, count in sorted_types[:15]:  # Show top 15 file types
+                output_lines.append(f"  {ext}: {count:,}")
+            if len(file_types) > 15:
+                output_lines.append(f"  ... and {len(file_types) - 15} more types")
+        
+        # Code Analysis
+        code_analysis = structure_analysis.get('code_analysis', {})
+        if code_analysis:
+            output_lines.append("Code Analysis:")
+            output_lines.append(f"  Smali Classes: {code_analysis.get('smali_classes', 0):,}")
+            output_lines.append(f"  Java Files: {code_analysis.get('java_files', 0):,}")
+            output_lines.append(f"  Kotlin Files: {code_analysis.get('kotlin_files', 0):,}")
+            output_lines.append(f"  XML Files: {code_analysis.get('xml_files', 0):,}")
+            output_lines.append(f"  DEX Files: {code_analysis.get('dex_files', 0):,}")
+        
+        # Resource Analysis
+        resource_analysis = structure_analysis.get('resource_analysis', {})
+        if resource_analysis:
+            output_lines.append("Resource Analysis:")
+            output_lines.append(f"  Drawable Resources: {resource_analysis.get('drawable_resources', 0)}")
+            output_lines.append(f"  Layout Resources: {resource_analysis.get('layout_resources', 0)}")
+            output_lines.append(f"  Value Resources: {resource_analysis.get('value_resources', 0)}")
+            output_lines.append(f"  Raw Resources: {resource_analysis.get('raw_resources', 0)}")
+            output_lines.append(f"  Asset Resources: {resource_analysis.get('asset_resources', 0)}")
+        
+        # Size Analysis
+        size_analysis = structure_analysis.get('size_analysis', {})
+        if size_analysis:
+            output_lines.append("Size Analysis:")
+            output_lines.append(f"  Total Size: {size_analysis.get('total_size_mb', 0)} MB")
+            
+            file_dist = size_analysis.get('file_size_distribution', {})
+            if file_dist:
+                output_lines.append("  File Size Distribution:")
+                output_lines.append(f"    Tiny (0-1KB): {file_dist.get('tiny', 0):,}")
+                output_lines.append(f"    Small (1-10KB): {file_dist.get('small', 0):,}")
+                output_lines.append(f"    Medium (10-100KB): {file_dist.get('medium', 0):,}")
+                output_lines.append(f"    Large (100KB-1MB): {file_dist.get('large', 0):,}")
+                output_lines.append(f"    Huge (1MB+): {file_dist.get('huge', 0):,}")
+            
+            largest_files = size_analysis.get('largest_files', [])
+            if largest_files:
+                output_lines.append("  Largest Files:")
+                for file_path, size_kb in largest_files[:5]:  # Show top 5
+                    output_lines.append(f"    {size_kb} KB: {Path(file_path).name}")
+        
+        # Security Analysis
+        security_analysis = structure_analysis.get('security_analysis', {})
+        if security_analysis:
+            output_lines.append("Security Analysis:")
+            
+            native_libs = security_analysis.get('native_libraries', [])
+            if native_libs:
+                output_lines.append(f"  Native Libraries: {len(native_libs)}")
+                for lib in native_libs[:3]:  # Show first 3
+                    output_lines.append(f"    - {Path(lib).name}")
+                if len(native_libs) > 3:
+                    output_lines.append(f"    ... and {len(native_libs) - 3} more")
+            
+            webview_files = security_analysis.get('webview_files', [])
+            if webview_files:
+                output_lines.append(f"  WebView Files: {len(webview_files)}")
+            
+            db_files = security_analysis.get('database_files', [])
+            if db_files:
+                output_lines.append(f"  Database Files: {len(db_files)}")
+            
+            cert_files = security_analysis.get('certificate_files', [])
+            if cert_files:
+                output_lines.append(f"  Certificate Files: {len(cert_files)}")
+        
+        output_lines.append("")
+        output_lines.append("=" * 80)
+        output_lines.append("📊 TINY SCAN COMPLETED SUCCESSFULLY")
+        output_lines.append("=" * 80)
+        
+        return "\n".join(output_lines)

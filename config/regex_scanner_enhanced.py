@@ -142,15 +142,15 @@ class EnhancedRegexScanner:
         
         # Skip obvious comments
         if line_content.strip().startswith('//') or line_content.strip().startswith('#'):
-            return True
+                return True
         
         # Skip if it's clearly a false positive
         if any(word in line_lower for word in ['example', 'test', 'sample', 'demo', 'placeholder']):
-            return True
+                return True
         
         # Check for safe security contexts (only for non-ICC)
         if self._has_safe_security_context(line_content, content, category):
-            return True
+                return True
         
         return False
     
@@ -174,15 +174,15 @@ class EnhancedRegexScanner:
         if ('android.intent.action.MAIN' in content and 
             'android.intent.category.LAUNCHER' in content and
             'android:exported="true"' in line_content):
-            return True
+                return True
         
         # System components are safe
         if 'android:name="android.' in line_content:
-            return True
+                return True
         
         # Components with proper permissions are safe
         if self._has_proper_permissions(line_content, content):
-            return True
+                return True
         
         return False
     
@@ -197,7 +197,7 @@ class EnhancedRegexScanner:
         
         for pattern in permission_patterns:
             if re.search(pattern, line_content, re.IGNORECASE):
-                return True
+                    return True
         
         return False
     

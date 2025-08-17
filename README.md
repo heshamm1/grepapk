@@ -2,7 +2,7 @@
 
 [![Python](https://img.shields.io/badge/Python-3.8+-blue.svg)](https://www.python.org/downloads/)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
-[![Version](https://img.shields.io/badge/Version-3.0-orange.svg)](https://github.com/yourusername/grepapk)
+[![Version](https://img.shields.io/badge/Version-3.0-orange.svg)](https://github.com/heshamm1/grepapk)
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen.svg)](https://developer.android.com/)
 
 > **Advanced Android APK Security Scanner** - Comprehensive vulnerability detection using AI and regex patterns
@@ -70,7 +70,7 @@ GrepAPK is a powerful Android APK security scanning tool that combines intellige
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/grepapk.git
+git clone https://github.com/heshamm1/grepapk.git
 cd grepapk
 
 # Install dependencies
@@ -84,7 +84,7 @@ python grepapk.py --help
 
 ```bash
 # Clone and install
-git clone https://github.com/yourusername/grepapk.git
+git clone https://github.com/heshamm1/grepapk.git
 cd grepapk
 python setup.py install
 
@@ -370,7 +370,7 @@ We welcome contributions to improve GrepAPK! Here's how you can help:
 
 ```bash
 # Fork and clone the repository
-git clone https://github.com/yourusername/grepapk.git
+git clone https://github.com/heshamm1/grepapk.git
 cd grepapk
 
 # Create a virtual environment
@@ -413,15 +413,9 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 📞 Support
 
-- **Issues**: [GitHub Issues](https://github.com/yourusername/grepapk/issues)
-- **Discussions**: [GitHub Discussions](https://github.com/yourusername/grepapk/discussions)
-- **Documentation**: [Wiki](https://github.com/yourusername/grepapk/wiki)
-
-## 🔄 Version History
-
-- **v3.0**: Complete codebase consolidation, enhanced ICC detection, improved false positive reduction
-- **v2.0**: AI model integration, multi-language support, expanded vulnerability coverage
-- **v1.0**: Initial release with basic regex scanning
+- **Issues**: [GitHub Issues](https://github.com/heshamm1/grepapk/issues)
+- **Discussions**: [GitHub Discussions](https://github.com/heshamm1/grepapk/discussions)
+- **Documentation**: [Wiki](https://github.com/heshamm1/grepapk/wiki)
 
 ---
 
