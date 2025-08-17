@@ -10,8 +10,9 @@ from pathlib import Path
 from typing import List, Dict, Any, Optional, Tuple
 from concurrent.futures import ThreadPoolExecutor, as_completed
 import logging
+from datetime import datetime
 
-from config.vulnerability_patterns import is_false_positive, is_icc_vulnerability
+from config.vulnerability_patterns import is_false_positive, is_icc_vulnerability, get_vulnerability_title, get_exploitation_method, get_exploitation_scenario
 
 logger = logging.getLogger(__name__)
 
@@ -109,7 +110,7 @@ class EnhancedRegexScanner:
                                     
                                     vulnerability = self._create_vulnerability(
                                         file_path, line_number, line_content, 
-                                        category, subcategory, match.group()
+                                        category, subcategory, pattern, line_content
                                     )
                                     file_vulnerabilities.append(vulnerability)
                                     continue
@@ -118,7 +119,7 @@ class EnhancedRegexScanner:
                                 if not self._is_false_positive(category, subcategory, line_content, content):
                                     vulnerability = self._create_vulnerability(
                                         file_path, line_number, line_content, 
-                                        category, subcategory, match.group()
+                                        category, subcategory, pattern, line_content
                                     )
                                     file_vulnerabilities.append(vulnerability)
             
@@ -201,29 +202,233 @@ class EnhancedRegexScanner:
         
         return False
     
-    def _create_vulnerability(self, file_path: Path, line_number: int, 
-                             line_content: str, category: str, subcategory: str, 
-                             matched_pattern: str) -> Dict[str, Any]:
-        """Create a vulnerability object."""
-        # Determine severity
-        severity = self._determine_severity(category, subcategory)
-        
-        # Calculate confidence score
-        confidence_score = self._calculate_confidence_score(category, subcategory, line_content)
-        
-        return {
-            'file_path': str(file_path),
-            'line_number': line_number,
-            'line_content': line_content.strip(),
-            'category': category,
-            'subcategory': subcategory,
-            'matched_pattern': matched_pattern,
-            'severity': severity,
-            'confidence_score': confidence_score,
-            'detection_method': 'regex'
-        }
+    def _create_vulnerability(self, file_path: Path, line_number: int, line_content: str, 
+                             category: str, subcategory: str, pattern: str, matched_text: str) -> Dict[str, Any]:
+        """Create a vulnerability entry with enhanced information."""
+        try:
+            # Extract package name and component name for accurate exploitation scenarios
+            package_name, component_name = self._extract_package_and_component(file_path, line_content, category, line_number)
+            
+            # Generate detailed exploitation scenario with AI-like analysis
+            exploitation_scenario = get_exploitation_scenario(category, subcategory, package_name, component_name)
+            
+            # Get vulnerability title and description
+            title = get_vulnerability_title(category, subcategory)
+            description = self._generate_vulnerability_description(category, subcategory, matched_text, line_content)
+            
+            # Determine severity and confidence
+            severity = self._determine_severity(category, subcategory, matched_text)
+            confidence_score = self._calculate_confidence_score(category, subcategory, matched_text, line_content)
+            
+            # Create comprehensive vulnerability entry
+            vulnerability = {
+                'discovered_vulnerability_title': title,
+                'discovered_vulnerable_class_and_line': {
+                    'file_path': str(file_path),
+                    'line_number': line_number,
+                    'line_content': line_content.strip()
+                },
+                'short_one_liner_description': description,
+                'exploit_method': get_exploitation_method(category, subcategory),
+                'exploitation_scenario': exploitation_scenario,
+                'additional_info': {
+                    'category': category,
+                    'subcategory': subcategory,
+                    'severity': severity,
+                    'detection_method': 'regex_enhanced',
+                    'confidence_score': confidence_score,
+                    'matched_pattern': pattern,
+                    'matched_text': matched_text[:200] + '...' if len(matched_text) > 200 else matched_text,
+                    'timestamp': datetime.now().isoformat(),
+                    'package_name': package_name,
+                    'component_name': component_name,
+                    'security_impact': self._assess_security_impact(category, subcategory),
+                    'remediation_priority': self._get_remediation_priority(severity, confidence_score)
+                }
+            }
+            
+            return vulnerability
+            
+        except Exception as e:
+            if self.verbose:
+                print(f"⚠️  Error creating vulnerability: {e}")
+            return None
     
-    def _determine_severity(self, category: str, subcategory: str) -> str:
+    def _generate_vulnerability_description(self, category: str, subcategory: str, matched_text: str, line_content: str) -> str:
+        """Generates a more detailed description for the vulnerability."""
+        base_description = get_vulnerability_title(category, subcategory)
+        
+        # Add specific details from the matched text
+        if 'android:exported="true"' in matched_text:
+            base_description += " (exported component)"
+        if 'android:permission' in matched_text:
+            base_description += " (with permission)"
+        if 'android:grantUriPermissions="true"' in matched_text:
+            base_description += " (with grantUriPermissions)"
+        if 'android:scheme="https://"' in matched_text or 'android:scheme="http://"' in matched_text:
+            base_description += " (with scheme)"
+        if 'android:host="localhost"' in matched_text or 'android:host="127.0.0.1"' in matched_text or 'android:host="::1"' in matched_text:
+            base_description += " (with host)"
+        if 'android:autoVerify="true"' in matched_text:
+            base_description += " (with autoVerify)"
+        if 'webView.getSettings().setAllowFileAccess(false)' in matched_text:
+            base_description += " (with webView settings)"
+        if 'android:networkSecurityConfig' in matched_text:
+            base_description += " (with network security config)"
+        if 'android:usesCleartextTraffic="false"' in matched_text:
+            base_description += " (with cleartext traffic)"
+        
+        # Add context from the line content if available
+        if 'android:name=' in line_content:
+            base_description += f" in {line_content.strip()}"
+        
+        return base_description
+    
+    def _assess_security_impact(self, category: str, subcategory: str) -> str:
+        """Assesses the security impact of a vulnerability."""
+        if is_icc_vulnerability(category, subcategory):
+            return "High"
+        
+        # For non-ICC vulnerabilities, use a simple heuristic
+        if 'hardcoded_secrets' in category:
+            return "High"
+        if 'insecure_webview' in category:
+            return "Medium"
+        if 'insecure_network' in category:
+            return "Medium"
+        if 'insecure_icc' in category:
+            return "Medium"
+        if 'input_validation' in category:
+            return "Low"
+        if 'code_debug_config' in category:
+            return "Low"
+        
+        return "Unknown"
+    
+    def _get_remediation_priority(self, severity: str, confidence_score: float) -> str:
+        """Determines the remediation priority based on severity and confidence."""
+        if severity == 'HIGH':
+            return 'P1' # Critical
+        if severity == 'MEDIUM':
+            return 'P2' # High
+        if confidence_score < 0.7:
+            return 'P3' # Medium
+        return 'P4' # Low
+    
+    def _extract_package_and_component(self, file_path: Path, line_content: str, category: str, line_number: int = 0) -> tuple[str, str]:
+        """Extract package name and component name from file path and content."""
+        package_name = "com.example.app"  # Default fallback
+        component_name = "MainActivity"    # Default fallback
+        
+        try:
+            # Try to extract package name from AndroidManifest.xml
+            if "AndroidManifest.xml" in str(file_path):
+                # Read the entire manifest file to get package name
+                try:
+                    with open(file_path, 'r', encoding='utf-8', errors='ignore') as f:
+                        manifest_content = f.read()
+                        # Look for package attribute in the manifest
+                        package_match = re.search(r'package="([^"]+)"', manifest_content)
+                        if package_match:
+                            package_name = package_match.group(1)
+                            if self.verbose:
+                                print(f"📦 Extracted package: {package_name}")
+                except Exception as e:
+                    if self.verbose:
+                        print(f"⚠️ Could not read AndroidManifest.xml: {e}")
+                
+                # Look for component names (activities, services, etc.)
+                if category == 'insecure_icc':
+                    # Read the entire manifest to find the component name for this specific line
+                    try:
+                        with open(file_path, 'r', encoding='utf-8', errors='ignore') as f:
+                            manifest_lines = f.readlines()
+                            # Look for the component declaration around the current line
+                            for i in range(max(0, line_number - 5), min(len(manifest_lines), line_number + 5)):
+                                line = manifest_lines[i]
+                                if 'android:name=' in line:
+                                    component_match = re.search(r'android:name="([^"]+)"', line)
+                                    if component_match:
+                                        full_component = component_match.group(1)
+                                        # Extract just the class name, not the full package path
+                                        component_name = full_component.split('.')[-1]
+                                        if self.verbose:
+                                            print(f"🔧 Extracted component: {component_name}")
+                                        break
+                    except Exception as e:
+                        if self.verbose:
+                            print(f"⚠️ Could not read manifest for component extraction: {e}")
+                    
+                    # Fallback: try to extract from current line if it contains android:name
+                    if component_name == "MainActivity" and 'android:name=' in line_content:
+                        component_match = re.search(r'android:name="([^"]+)"', line_content)
+                        if component_match:
+                            full_component = component_match.group(1)
+                            component_name = full_component.split('.')[-1]
+                            if self.verbose:
+                                print(f"🔧 Extracted component from current line: {component_name}")
+                
+                # For non-ICC vulnerabilities, try to extract component from current line
+                else:
+                    if 'android:name=' in line_content:
+                        component_match = re.search(r'android:name="([^"]+)"', line_content)
+                        if component_match:
+                            full_component = component_match.group(1)
+                            component_name = full_component.split('.')[-1]
+                            if self.verbose:
+                                print(f"🔧 Extracted component for non-ICC: {component_name}")
+            
+            # For Java/Kotlin files, try to extract class name from file path
+            elif file_path.suffix in ['.java', '.kt']:
+                # Extract class name from file path
+                component_name = file_path.stem
+                if self.verbose:
+                    print(f"🔧 Extracted component from file path: {component_name}")
+                
+                # Try to find package name from file content
+                try:
+                    with open(file_path, 'r', encoding='utf-8', errors='ignore') as f:
+                        content = f.read()
+                        package_match = re.search(r'package\s+([^;]+);', content)
+                        if package_match:
+                            package_name = package_match.group(1).strip()
+                            if self.verbose:
+                                print(f"📦 Extracted package from Java/Kotlin: {package_name}")
+                except Exception:
+                    pass
+            
+            # For Smali files, try to extract class name and package
+            elif file_path.suffix == '.smali':
+                # Extract class name from file path
+                component_name = file_path.stem
+                if self.verbose:
+                    print(f"🔧 Extracted component from Smali: {component_name}")
+                
+                # Try to extract package from smali file content
+                try:
+                    with open(file_path, 'r', encoding='utf-8', errors='ignore') as f:
+                        content = f.read()
+                        # Look for .class directive
+                        class_match = re.search(r'\.class\s+([^;]+);', content)
+                        if class_match:
+                            full_class = class_match.group(1)
+                            # Extract package and class name
+                            parts = full_class.split('/')
+                            if len(parts) > 1:
+                                package_name = '.'.join(parts[:-1])
+                                component_name = parts[-1]
+                                if self.verbose:
+                                    print(f"📦 Extracted from Smali - Package: {package_name}, Component: {component_name}")
+                except Exception:
+                    pass
+                    
+        except Exception as e:
+            if self.verbose:
+                print(f"⚠️ Error in package/component extraction: {e}")
+        
+        return package_name, component_name
+    
+    def _determine_severity(self, category: str, subcategory: str, matched_text: str) -> str:
         """Determine the severity level of a vulnerability."""
         full_category = f"{category}.{subcategory}"
         
@@ -231,9 +436,23 @@ class EnhancedRegexScanner:
             if full_category in categories:
                 return level
         
+        # Fallback for non-standard categories or specific patterns
+        if 'hardcoded_secrets' in category:
+            return 'HIGH'
+        if 'insecure_webview' in category:
+            return 'MEDIUM'
+        if 'insecure_network' in category:
+            return 'MEDIUM'
+        if 'insecure_icc' in category:
+            return 'MEDIUM'
+        if 'input_validation' in category:
+            return 'LOW'
+        if 'code_debug_config' in category:
+            return 'LOW'
+        
         return 'MEDIUM'  # Default severity
     
-    def _calculate_confidence_score(self, category: str, subcategory: str, line_content: str) -> float:
+    def _calculate_confidence_score(self, category: str, subcategory: str, matched_text: str, line_content: str) -> float:
         """Calculate confidence score for the vulnerability detection."""
         base_score = 0.5
         
@@ -242,10 +461,10 @@ class EnhancedRegexScanner:
             base_score = 0.8
         
         # Adjust based on context
-        if 'android:exported="true"' in line_content:
+        if 'android:exported="true"' in matched_text:
             base_score += 0.2
         
-        if 'android:permission' in line_content:
+        if 'android:permission' in matched_text:
             base_score -= 0.1
         
         # Ensure score is within bounds
@@ -313,13 +532,13 @@ class EnhancedRegexScanner:
         # Severity breakdown
         severity_counts = {}
         for vuln in vulnerabilities:
-            severity = vuln.get('severity', 'UNKNOWN')
+            severity = vuln.get('additional_info', {}).get('severity', 'UNKNOWN')
             severity_counts[severity] = severity_counts.get(severity, 0) + 1
         
         # Category breakdown
         category_counts = {}
         for vuln in vulnerabilities:
-            category = vuln.get('category', 'unknown')
+            category = vuln.get('additional_info', {}).get('category', 'unknown')
             category_counts[category] = category_counts.get(category, 0) + 1
         
         # Detection methods breakdown

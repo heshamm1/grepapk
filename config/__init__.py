@@ -16,14 +16,16 @@ from . import ai_scanner
 from . import ai_vulnerability_detector
 from . import output_manager
 from . import help_banner
+from . import rasp_detector
 
 # Export main classes and functions
 __all__ = [
     'grepapk_main',
-    'vulnerability_patterns', 
+    'vulnerability_patterns',
     'regex_scanner_enhanced',
     'ai_scanner',
     'ai_vulnerability_detector',
     'output_manager',
-    'help_banner'
+    'help_banner',
+    'rasp_detector'
 ]

@@ -12,19 +12,56 @@ from typing import Optional
 class HelpBanner:
     """Handles help text, banner display, and tool information."""
     
-    @staticmethod
-    def display_banner() -> None:
+    def __init__(self):
+        self.version = "3.0"
+    
+    def _get_banner(self):
+        """Get the banner text."""
+        return f"""
+                                   .-=****+-.                                   
+                               :=+#%%%%%%%%%%#*=:.                              
+                          .-+*#%%%%%%%%%%%%%%%%%%#*+-.                          
+                      :-+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%#+=:                      
+                 .-=*#%%%%%%%%#+#%%%%%%%%%%%%%%#=#%%%%%%%%#*=-.                 
+               =#%%%%%%%%%%%%%%-.#%%%##**##%%%#.-%%%%%%%%%%%%%%#=               
+              -%%%%%%%%%%%%%%%%%-.=:.      .:=.-%%%%%%%%%%%%%%%%%-              
+              =%%%%%%%%%%%%%%%#-.              .=#%%%%%%%%%%%%%%%=              
+              -%%%%%%%%%%%%%%=   ..          ..   =%%%%%%%%%%%%%%:              
+              -%%%%%%%%%%%%#:   -%%:        .%%-   :%%%%%%%%%%%%%:              
+              :%%%%%%%%%%%%-     ::          ::     -%%%%%%%%%%%%-              
+              :%%%%%%%%%%%*                          *%%%%%%%%%%%:              
+              .%%%%%%%%%%%#--------------------------#%%%%%%%%%%#.              
+               #%%%%#-..-%#-------------------------==+#%%%%%%%%#               
+               *%%%%-    =*                 .-=+***+=-:.:+#%%%%%+               
+               -%%%%:    =*              .=#%#*+===+*#%#=. =%%%%-               
+               .%%%%:    =*             =%%+:         .=#%+ :#%%.               
+                *%%%:    =*            *%*.  .=++.       =%#..#*                
+                :%%%:    =*           +%*    +%:*#   :-.  =%# -:                
+                 *%%:    =*          :%#.     +%*.  +*-#-  *%-                  
+                 .%%=    +*          =%+   .  :@-   =*+*:  =%*                  
+                  -%#=::=%*          -%* -**+  *#:   =@:   =%+                  
+                   +%%%%%%*          .%%.-**%-  -#*  -%.   #%:                  
+                    +%%%%%#:          =%*   :**. -%. :%=  *%+                   
+                     =%%%%%%#*=     += =%#-  .%= -%   .*#*%+                    
+                      -#%%%%%%*     #%+.:*%#-:%= :%. .-*%%%*:                   
+                       .*%%%%%*     *%%#-.:+#%%#**%##%%+:=#%%#+.                
+                         -#%%%*     #%%%%#+-:::-=-=--:    -%%%%#=               
+                          .+#%%+:.:*%%%%%%%%%#*+==++-      -#%%%%#-             
+                            .=#%%%%%%%%%%%%%%%%%%%+.         =#%%%%*            
+                              .=#%%%%%%%%%%%%%%#=.            .+%%%#.           
+                                 -*%%%%%%%%%%*-                 :=-.            
+                                   .-*#%%%*=.                                   
+                                      .::.                                      
+
+           🔒 GrepAPK - Advanced Android APK Security Scanner v{self.version}
+         🤖 AI-Powered Vulnerability Detection with CodeBERT / CodeT5
+                             Made with <3 by @etchoo
+=================================================================="""
+    
+    def display_banner(self):
         """Display the GrepAPK banner."""
-        try:
-            banner_path = Path('banner.txt')
-            if banner_path.exists():
-                with open(banner_path, 'r', encoding='utf-8') as f:
-                    banner = f.read()
-                    click.echo(banner)
-            else:
-                HelpBanner._display_fallback_banner()
-        except (FileNotFoundError, UnicodeEncodeError):
-            HelpBanner._display_fallback_banner()
+        banner = self._get_banner()
+        print(banner)
     
     @staticmethod
     def _display_fallback_banner() -> None:
@@ -259,14 +296,112 @@ VULNERABILITY CATEGORIES:
 """
         click.echo(categories_text)
     
-    @staticmethod
-    def display_help() -> None:
+    def show_help(self):
         """Display comprehensive help information."""
-        HelpBanner.display_banner()
-        HelpBanner.display_usage()
-        HelpBanner.display_features()
-        HelpBanner.display_scan_types()
-        HelpBanner.display_vulnerability_categories()
+        help_text = f"""
+                                   .-=****+-.                                   
+                               :=+#%%%%%%%%%%#*=:.                              
+                          .-+*#%%%%%%%%%%%%%%%%%%#*+-.                          
+                      :-+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%#+=:                      
+                 .-=*#%%%%%%%%#+#%%%%%%%%%%%%%%#=#%%%%%%%%#*=-.                 
+               =#%%%%%%%%%%%%%%-.#%%%##**##%%%#.-%%%%%%%%%%%%%%#=               
+              -%%%%%%%%%%%%%%%%%-.=:.      .:=.-%%%%%%%%%%%%%%%%%-              
+              =%%%%%%%%%%%%%%%#-.              .=#%%%%%%%%%%%%%%%=              
+              -%%%%%%%%%%%%%%=   ..          ..   =%%%%%%%%%%%%%%:              
+              -%%%%%%%%%%%%#:   -%%:        .%%-   :%%%%%%%%%%%%%:              
+              :%%%%%%%%%%%%-     ::          ::     -%%%%%%%%%%%%-              
+              :%%%%%%%%%%%*                          *%%%%%%%%%%%:              
+              .%%%%%%%%%%%#--------------------------#%%%%%%%%%%#.              
+               #%%%%#-..-%#-------------------------==+#%%%%%%%%#               
+               *%%%%-    =*                 .-=+***+=-:.:+#%%%%%+               
+               -%%%%:    =*              .=#%#*+===+*#%#=. =%%%%-               
+               .%%%%:    =*             =%%+:         .=#%+ :#%%.               
+                *%%%:    =*            *%*.  .=++.       =%#..#*                
+                :%%%:    =*           +%*    +%:*#   :-.  =%# -:                
+                 *%%:    =*          :%#.     +%*.  +*-#-  *%-                  
+                 .%%=    +*          =%+   .  :@-   =*+*:  =%*                  
+                  -%#=::=%*          -%* -**+  *#:   =@:   =%+                  
+                   +%%%%%%*          .%%.-**%-  -#*  -%.   #%:                  
+                    +%%%%%#:          =%*   :**. -%. :%=  *%+                   
+                     =%%%%%%#*=     += =%#-  .%= -%   .*#*%+                    
+                      -#%%%%%%*     #%+.:*%#-:%= :%. .-*%%%*:                   
+                       .*%%%%%*     *%%#-.:+#%%#**%##%%+:=#%%#+.                
+                         -#%%%*     #%%%%#+-:::-=-=--:    -%%%%#=               
+                          .+#%%+:.:*%%%%%%%%%#*+==++-      -#%%%%#-             
+                            .=#%%%%%%%%%%%%%%%%%%%+.         =#%%%%*            
+                              .=#%%%%%%%%%%%%%%#=.            .+%%%#.           
+                                 -*%%%%%%%%%%*-                 :=-.            
+                                   .-*#%%%*=.                                   
+                                      .::.                                      
+
+     ██████╗ ██████╗ ███████╗██████╗  █████╗ ██████╗ ██╗  ██╗
+    ██╔════╝ ██╔══██╗██╔════╝██╔══██╗██╔══██╗██╔══██╗██║ ██╔╝
+    ██║  ███╗██████╔╝█████╗  ██████╔╝███████║██████╔╝█████╔╝
+    ██║   ██║██╔══██╗██╔══╝  ██╔═══╝ ██╔══██║██╔═══╝ ██╔═██╗
+    ╚██████╔╝██║  ██║███████╗██║     ██║  ██║██║     ██║  ██╗
+     ╚═════╝ ╚═╝  ╚═╝╚══════╝╚═╝     ╚═╝  ╚═╝     ╚═╝  ╚═╝
+        🔒 Advanced Android APK Security Scanner v{self.version}
+  🤖 AI-Powered Vulnerability Detection with CodeBERT / CodeT5
+                      Made with <3 by @etchoo
+==================================================================
+
+📋 **USAGE:**
+   python grepapk.py -d <directory> [OPTIONS]
+
+🔧 **REQUIRED ARGUMENTS:**
+   -d, --directory <path>    Directory of the APK codebase to scan
+
+📊 **SCAN TYPES:**
+   -T, --tiny-scan          Perform tiny scan (framework analysis only)
+   -F, --full-scan          Perform full vulnerability scan
+   --rasp-only              Perform RASP mechanism analysis only
+
+🤖 **AI SCANNING OPTIONS:**
+   --ai-only                Use AI model only for scanning
+   --regex-only             Use regex patterns only for scanning
+   --all-methods            Use all detection methods (AI + regex)
+
+📁 **OUTPUT OPTIONS:**
+   -f, --format <format>    Output format: txt or json (default: txt)
+   -o, --output <name>      Output filename without extension (default: grepapk_scan)
+   -v, --verbose            Enable verbose output
+
+📝 **EXAMPLES:**
+   # Quick framework analysis
+   python grepapk.py -d /path/to/apk -T -v
+
+   # AI vulnerability scan (default)
+   python grepapk.py -d /path/to/apk -F --ai-only -v
+
+   # Full scan with all methods
+   python grepapk.py -d /path/to/apk -F --all-methods -v
+
+   # RASP protection analysis
+   python grepapk.py -d /path/to/apk --rasp-only -v
+
+🔍 **VULNERABILITY CATEGORIES:**
+   • Insecure Data Storage
+   • Insecure Inter-Component Communication (ICC)
+   • Insecure WebView Usage
+   • Hardcoded Secrets
+   • Insecure Network Communication
+   • Input Validation & Code Injection
+   • Code & Debug Configuration Issues
+   • Side-Channel & Leakage Issues
+   • Insecure Third-Party SDK Usage
+   • Poor Local Authentication & Session Handling
+   • Root Detection & Jailbreak Detection Bypass
+   • SSL Pinning Implementation & Bypass
+
+💡 **TIPS:**
+   • AI scanning is enabled by default for comprehensive analysis
+   • Use --regex-only for fastest results without AI processing
+   • Use -v for detailed progress information
+   • All scans now include detailed exploitation scenarios
+
+📚 **For more information, visit: https://github.com/heshamm1/grepapk**
+"""
+        print(help_text)
     
     @staticmethod
     def get_version() -> str:

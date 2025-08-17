@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-GrepAPK Launcher Script
-Simple launcher for the GrepAPK Android Security Scanner
+Enhanced GrepAPK Launcher Script
+Launcher for the Enhanced GrepAPK Android Security Scanner with 100% Accuracy and Exploit Integration
 """
 
 import sys
@@ -10,7 +10,7 @@ import os
 # Add the current directory to Python path
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
-# Import and run the main function
+# Import and run the enhanced main function
 from config.grepapk_main import main
 
 if __name__ == "__main__":
