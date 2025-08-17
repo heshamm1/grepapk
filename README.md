@@ -1,11 +1,17 @@
 # GrepAPK 🔍
 
+<div align="center">
+  <img src="files/logo.png" alt="GrepAPK Logo" width="400"/>
+  <br/>
+  <em>Advanced Android APK Security Scanner</em>
+</div>
+
 [![Python](https://img.shields.io/badge/Python-3.8+-blue.svg)](https://www.python.org/downloads/)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
-[![Version](https://img.shields.io/badge/Version-3.0-orange.svg)](https://github.com/heshamm1/grepapk)
+[![Version](https://img.shields.io/badge/Version-1.0-orange.svg)](https://github.com/heshamm1/grepapk)
 [![Platform](https://img.shields.io/badge/Platform-Android-brightgreen.svg)](https://developer.android.com/)
 
-> **Advanced Android APK Security Scanner** - Comprehensive vulnerability detection using AI and regex patterns
+> **Comprehensive vulnerability detection using AI and regex patterns**
 
 ## 📋 Table of Contents
 
@@ -401,17 +407,13 @@ python -m pytest tests/
 4. Push to the branch (`git push origin feature/amazing-feature`)
 5. Open a Pull Request
 
-## 📄 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
 ## 🙏 Acknowledgments
 
 - **Microsoft Research**: CodeBERT and CodeT5 models
 - **Android Security Community**: Vulnerability research and patterns
 - **Open Source Contributors**: Pattern libraries and security tools
 
-## 📞 Support
+## Support
 
 - **Issues**: [GitHub Issues](https://github.com/heshamm1/grepapk/issues)
 - **Discussions**: [GitHub Discussions](https://github.com/heshamm1/grepapk/discussions)
