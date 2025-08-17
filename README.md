@@ -1,7 +1,7 @@
 # GrepAPK 🔍
 
 <div align="center">
-  <img src="files/logo.png" alt="GrepAPK Logo" width="400"/>
+  <img src="files/logo.png" alt="GrepAPK Logo" width=""/>
   <br/>
   <em>Advanced Android APK Security Scanner</em>
 </div>
