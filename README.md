@@ -36,10 +36,11 @@ GrepAPK is a powerful Android APK security scanning tool that combines intellige
 - **Multi-Language Support**: Java, Kotlin, Dart, and Smali
 - **AI-Powered Detection**: Advanced vulnerability analysis using CodeBERT/CodeT5 models
 - **Comprehensive Coverage**: 12 major vulnerability categories
-- **Flexible Scanning**: Tiny scan (framework analysis) and full vulnerability scan
+- **Flexible Scanning**: Tiny scan (framework analysis), full vulnerability scan, and RASP analysis
 - **Multiple Output Formats**: JSON and TXT reports
 - **False Positive Reduction**: Smart filtering for accurate results
 - **ADB Payload Generation**: Ready-to-use exploitation commands
+- **RASP Detection**: Runtime Application Self-Protection mechanism analysis
 
 ## 🚀 Features
 
@@ -62,6 +63,7 @@ GrepAPK is a powerful Android APK security scanning tool that combines intellige
 - **AI Model Integration**: Microsoft CodeBERT/CodeT5 for intelligent analysis
 - **Parallel Processing**: Multi-threaded scanning for performance
 - **Context-Aware Analysis**: Reduced false positives through smart filtering
+- **RASP Detection**: Runtime protection mechanism analysis and assessment
 - **Exportable Results**: JSON and TXT formats with detailed vulnerability information
 
 ## 📦 Installation
@@ -129,6 +131,7 @@ Options:
   -d, --directory TEXT     Directory of the APK codebase to scan [required]
   -T, --tiny-scan         Perform tiny scan (framework analysis only)
   -F, --full-scan         Perform full vulnerability scan
+  --rasp-only             Perform RASP mechanism analysis only
   --ai-only               Use AI model only for scanning
   --regex-only            Use regex patterns only for scanning
   --all-methods           Use all detection methods (AI + regex)
@@ -159,6 +162,15 @@ python grepapk.py -d /path/to/apk -F --all-methods -f json -o full_scan
 ```
 
 **Output**: Complete vulnerability report with severity levels and exploitation details
+
+#### 3. RASP Analysis (--rasp-only)
+Analyzes Runtime Application Self-Protection mechanisms and security controls.
+
+```bash
+python grepapk.py -d /path/to/apk --rasp-only -f json -o rasp_analysis
+```
+
+**Output**: RASP mechanism assessment, protection effectiveness, and security control analysis
 
 ### Detection Methods
 
@@ -329,6 +341,7 @@ The tool automatically detects and uses configuration from the `config/` directo
 - `regex_scanner_enhanced.py`: Enhanced scanning logic
 - `ai_scanner.py`: AI model integration
 - `output_manager.py`: Output formatting and management
+- `rasp_detector.py`: RASP mechanism detection and analysis
 
 ## 📝 Examples
 
@@ -366,6 +379,15 @@ python grepapk.py -d /path/to/android/app -F --regex-only -f txt -o quick_scan
 python grepapk.py -d /path/to/android/app -F --ai-only -f json -o ai_analysis -v
 
 # Output: Intelligent vulnerability analysis with confidence scores
+```
+
+### Example 5: RASP Mechanism Analysis
+
+```bash
+# Analyze runtime protection mechanisms
+python grepapk.py -d /path/to/android/app --rasp-only -f json -o rasp_analysis -v
+
+# Output: RASP mechanism assessment, protection effectiveness, and security controls
 ```
 
 ## 🤝 Contributing
