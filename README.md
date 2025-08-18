@@ -125,20 +125,57 @@ python grepapk.py -d /path/to/apk/source -F --ai-only -f json -o ai_scan
 ### Command Line Options
 
 ```bash
-python grepapk.py [OPTIONS]
+python .\grepapk.py -h
+
+                             @@@@@@@@
+                        @@@@@@@@@@@@@@@@@@
+                    @@@@@@@@@@@@@@@@@@@@@@@@@@
+               @@@@@@@@@@ @@@@@@@@@@@@@ @@@@@@@@@@@
+            @@@@@@@@@@@@@@ @@@@@@@@@@@@ @@@@@@@@@@@@@@
+            @@@@@@@@@@@@@@@            @@@@@@@@@@@@@@
+            @@@@@@@@@@@@@                @@@@@@@@@@@@@
+            @@@@@@@@@@@    @@       @@@   @@@@@@@@@@@@
+            @@@@@@@@@@                     @@@@@@@@@@
+            @@@@@@@@@@                      @@@@@@@@@@
+            @@@@@@  @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+            @@@@                      @@@@@@   @@@@@@
+            @@@@@    @             @@@@    @@@@ @@@@@
+             @@@@    @           @@@          @@@ @@@
+             @@@@    @          @@   @@@@       @@ @
+              @@@    @         @@    @@@@  @@@@ @@@
+              @@@    @         @@     @@   @@@   @@
+               @@@@@@@         @@ @@@ @@@   @    @@
+                @@@@@@         @@@ @@@  @@@ @   @@
+                 @@@@@@@        @@@  @@  @@ @@@@@
+                  @@@@@@@@   @@@ @@@  @  @@  @@@@
+                   @@@@@@@   @@@@@  @@@@@@@@@@@@@@@@
+                     @@@@    @@@@@@@@  @@@      @@@@@@
+                      @@@@@@@@@@@@@@@@@@@@@       @@@@@@
+                         @@@@@@@@@@@@@@@@          @@@@@@
+                           @@@@@@@@@@@@
+                              @@@@@@
+        🔒 GrepAPK - Advanced Android APK Security Scanner v3.0
+      🤖 AI-Powered Vulnerability Detection with CodeBERT / CodeT5
+                          Made with <3 by @etchoo
+==================================================================
+Usage: grepapk.py [OPTIONS]
+
+  GrepAPK - Android APK Security Scanner
 
 Options:
-  -d, --directory TEXT     Directory of the APK codebase to scan [required]
-  -T, --tiny-scan         Perform tiny scan (framework analysis only)
-  -F, --full-scan         Perform full vulnerability scan
-  --rasp-only             Perform RASP mechanism analysis only
-  --ai-only               Use AI model only for scanning
-  --regex-only            Use regex patterns only for scanning
-  --all-methods           Use all detection methods (AI + regex)
-  -f, --format TEXT       Output format (txt or json) [default: txt]
-  -o, --output TEXT       Output filename (without extension) [default: grepapk_scan]
-  -v, --verbose           Enable verbose output
-  --help                  Show this message and exit
+  -h, --help               Show this help message and exit
+  -d, --directory TEXT     Directory of the APK codebase to scan  [required]
+  -T, --tiny-scan          Perform tiny scan (framework analysis only)
+  -F, --full-scan          Perform enhanced full vulnerability scan
+  --ai-only                Use AI model only for scanning
+  --regex-only             Use regex patterns only for scanning
+  --all-methods            Use all detection methods (AI + regex) with
+                           enhanced accuracy
+  --rasp-only              Perform RASP mechanism analysis only
+  -f, --format [txt|json]  Output format (txt or json)
+  -o, --output TEXT        Output filename (without extension)
+  -v, --verbose            Enable verbose output
+PS H:\GrepAPK> 
 ```
 
 ## 📖 Usage
