@@ -276,7 +276,16 @@ class GrepAPKController:
                 print(f"❌ Error saving enhanced results: {e}")
             raise
 
+def show_custom_help(ctx, param, value):
+    """Custom help callback that displays the banner logo."""
+    if not value or ctx.resilient_parsing:
+        return
+    help_banner = HelpBanner()
+    help_banner.show_help()
+    ctx.exit()
+
 @click.command()
+@click.option('-h', '--help', is_flag=True, callback=show_custom_help, expose_value=False, help='Show this help message and exit')
 @click.option('-d', '--directory', required=True, help='Directory of the APK codebase to scan')
 @click.option('-T', '--tiny-scan', is_flag=True, help='Perform tiny scan (framework analysis only)')
 @click.option('-F', '--full-scan', is_flag=True, help='Perform enhanced full vulnerability scan')
@@ -290,9 +299,9 @@ class GrepAPKController:
 def main(directory: str, tiny_scan: bool, full_scan: bool, ai_only: bool, 
           regex_only: bool, all_methods: bool, rasp_only: bool, output_format: str, 
           output_name: str, verbose: bool):
-    """Enhanced GrepAPK - Android APK Security Scanner with 100% Accuracy and Exploit Integration"""
+    """GrepAPK - Android APK Security Scanner"""
     
-    # Show help if requested
+    # Show help if no scan type is specified
     if not any([tiny_scan, full_scan, rasp_only]):
         help_banner = HelpBanner()
         help_banner.show_help()
