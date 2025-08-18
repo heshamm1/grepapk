@@ -175,7 +175,6 @@ Options:
   -f, --format [txt|json]  Output format (txt or json)
   -o, --output TEXT        Output filename (without extension)
   -v, --verbose            Enable verbose output
-PS H:\GrepAPK> 
 ```
 
 ## 📖 Usage
