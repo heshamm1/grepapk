@@ -73,13 +73,17 @@ class HelpBanner:
 =================================================================="""
     
     def _get_logo_from_file(self):
-        """Try to get logo from files folder and convert to ASCII art."""
+        """Try to get logo from banner.txt file in the files folder."""
         try:
-            logo_path = Path(__file__).parent.parent / "files" / "logo.png"
-            if logo_path.exists():
-                # For now, return the ASCII logo since we can't easily convert PNG to ASCII
-                # In a real implementation, you might use a library like PIL + ascii-magic
-                return self._get_logo_ascii()
+            banner_path = Path(__file__).parent.parent / "files" / "banner.txt"
+            if banner_path.exists():
+                with open(banner_path, 'r', encoding='utf-8') as f:
+                    banner_content = f.read()
+                return f"""{banner_content}
+        🔒 GrepAPK - Advanced Android APK Security Scanner v{self.version}
+      🤖 AI-Powered Vulnerability Detection with CodeBERT / CodeT5
+                          Made with <3 by @etchoo
+=================================================================="""
             else:
                 return self._get_logo_ascii()
         except Exception:
@@ -87,8 +91,23 @@ class HelpBanner:
     
     def display_banner(self):
         """Display the GrepAPK banner."""
-        banner = self._get_banner()
-        print(banner)
+        try:
+            banner_path = Path(__file__).parent.parent / "files" / "banner.txt"
+            if banner_path.exists():
+                with open(banner_path, 'r', encoding='utf-8') as f:
+                    banner_content = f.read()
+                banner = f"""{banner_content}
+        🔒 GrepAPK - Advanced Android APK Security Scanner v{self.version}
+      🤖 AI-Powered Vulnerability Detection with CodeBERT / CodeT5
+                          Made with <3 by @etchoo
+=================================================================="""
+                print(banner)
+            else:
+                banner = self._get_banner()
+                print(banner)
+        except Exception:
+            banner = self._get_banner()
+            print(banner)
     
     @staticmethod
     def _display_fallback_banner() -> None:
