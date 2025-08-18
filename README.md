@@ -14,24 +14,24 @@
 
 > **Comprehensive vulnerability detection using AI and regex patterns**
 
-## 📋 Table of Contents
+## Table of Contents
 
 - [Overview](#Overview)
-- [Features](#features)
-- [Installation](#installation)
+- [Features](#Features)
+- [Installation](#Installation)
 - [Quick Start](#quick-start)
-- [Usage](#usage)
+- [Usage](#Usage)
 - [Vulnerability Categories](#vulnerability-categories)
 - [Output Formats](#output-formats)
 - [Configuration](#configuration)
 - [Examples](#examples)
 - [License](#license)
 
-## 🎯 Overview
+## Overview
 
 GrepAPK is a powerful Android APK security scanning tool that combines intelligent regex pattern matching with AI-powered vulnerability detection. It provides comprehensive analysis of Android applications to identify security vulnerabilities across multiple programming languages and frameworks.
 
-### ✨ Key Capabilities
+### Key Capabilities
 
 - **Multi-Language Support**: Java, Kotlin, Dart, and Smali
 - **AI-Powered Detection**: Advanced vulnerability analysis using CodeBERT/CodeT5 models
@@ -42,9 +42,9 @@ GrepAPK is a powerful Android APK security scanning tool that combines intellige
 - **ADB Payload Generation**: Ready-to-use exploitation commands
 - **RASP Detection**: Runtime Application Self-Protection mechanism analysis
 
-## 🚀 Features
+## Features
 
-### 🔍 Vulnerability Detection
+### Vulnerability Detection
 - **Insecure Data Storage**: SharedPreferences, SQLite, file storage vulnerabilities
 - **Insecure ICC**: Exported components, intent hijacking, task hijacking
 - **WebView Vulnerabilities**: JavaScript injection, insecure content loading
@@ -58,7 +58,7 @@ GrepAPK is a powerful Android APK security scanning tool that combines intellige
 - **Root Detection**: Bypass techniques, detection logic
 - **SSL Pinning**: Implementation flaws, bypass methods
 
-### 🛠️ Technical Features
+### Technical Features
 - **Regex Pattern Matching**: 1000+ vulnerability patterns
 - **AI Model Integration**: Microsoft CodeBERT/CodeT5 for intelligent analysis
 - **Parallel Processing**: Multi-threaded scanning for performance
@@ -66,7 +66,7 @@ GrepAPK is a powerful Android APK security scanning tool that combines intellige
 - **RASP Detection**: Runtime protection mechanism analysis and assessment
 - **Exportable Results**: JSON and TXT formats with detailed vulnerability information
 
-## 📦 Installation
+## Installation
 
 ### Prerequisites
 
@@ -107,7 +107,7 @@ grepapk --help
 python install.py
 ```
 
-## 🚀 Quick Start
+## Quick Start
 
 ### Basic Usage
 
@@ -177,7 +177,7 @@ Options:
   -v, --verbose            Enable verbose output
 ```
 
-## 📖 Usage
+## Usage
 
 ### Scan Types
 
@@ -231,7 +231,7 @@ Uses both regex and AI for maximum coverage and accuracy.
 python grepapk.py -d /path/to/apk -F --all-methods -f json -o combined_scan
 ```
 
-## 🎯 Vulnerability Categories
+## Vulnerability Categories
 
 ### 1. Insecure Data Storage
 - **SharedPreferences**: Plaintext storage of sensitive data
@@ -355,7 +355,7 @@ Vulnerabilities Found:
    Recommendation: Use EncryptedSharedPreferences for sensitive data
 ```
 
-## ⚙️ Configuration
+## Configuration
 
 ### Environment Variables
 
@@ -379,7 +379,7 @@ The tool automatically detects and uses configuration from the `config/` directo
 - `output_manager.py`: Output formatting and management
 - `rasp_detector.py`: RASP mechanism detection and analysis
 
-## 📝 Examples
+## Examples
 
 ### Example 1: Quick Security Assessment
 
@@ -426,7 +426,7 @@ python grepapk.py -d /path/to/android/app --rasp-only -f json -o rasp_analysis -
 # Output: RASP mechanism assessment, protection effectiveness, and security controls
 ```
 
-## 🤝 Contributing
+## Contributing
 
 We welcome contributions to improve GrepAPK! Here's how you can help:
 
@@ -465,7 +465,7 @@ python -m pytest tests/
 4. Push to the branch (`git push origin feature/amazing-feature`)
 5. Open a Pull Request
 
-## 🙏 Acknowledgments
+## Acknowledgments
 
 - **Microsoft Research**: CodeBERT and CodeT5 models
 - **Android Security Community**: Vulnerability research and patterns
