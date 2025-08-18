@@ -115,28 +115,10 @@ class HelpBanner:
         fallback_banner = """GrepAPK - Android APK Security Scanner v2.0
 ================================================================================
 Advanced Android APK Security Scanner with AI-Powered Vulnerability Detection
-Hybrid Detection: Regex + AI + Semgrep Integration
+Hybrid Detection: Regex + AI Integration
 Professional Security Analysis & Exploitation Methods
 ================================================================================
-
-Features:
-  • AI-Enhanced Vulnerability Detection (Confidence Scoring)
-  • Hybrid Detection (Regex + AI + Semgrep)
-  • Comprehensive Android Security Analysis
-  • Advanced Framework Detection
-  • Professional Vulnerability Reports
-  • Parallel Processing & Performance Optimization
-  • Rich Console Output & HTML Reports
-
-AI Capabilities:
-  • CodeBERT / CodeT5 Integration
-  • Context-Aware Code Analysis
-  • Confidence Scoring (0.0 – 1.0)
-  • False Positive Reduction
-  • Intelligent Remediation Suggestions
-  • Parallel AI Processing
-
-Version: 2.0
+Version: 1.0
 Author: @etchoo
 AI Model: Microsoft CodeBERT / CodeT5
 ================================================================================
@@ -343,65 +325,8 @@ VULNERABILITY CATEGORIES:
         click.echo(categories_text)
     
     def show_help(self):
-        """Display comprehensive help information."""
-        help_text = f"""{self._get_logo_from_file()}
-
-📋 **USAGE:**
-   python grepapk.py -d <directory> [OPTIONS]
-
-🔧 **REQUIRED ARGUMENTS:**
-   -d, --directory <path>    Directory of the APK codebase to scan
-
-📊 **SCAN TYPES:**
-   -T, --tiny-scan          Perform tiny scan (framework analysis only)
-   -F, --full-scan          Perform full vulnerability scan
-   --rasp-only              Perform RASP mechanism analysis only
-
-🤖 **AI SCANNING OPTIONS:**
-   --ai-only                Use AI model only for scanning
-   --regex-only             Use regex patterns only for scanning
-   --all-methods            Use all detection methods (AI + regex)
-
-📁 **OUTPUT OPTIONS:**
-   -f, --format <format>    Output format: txt or json (default: txt)
-   -o, --output <name>      Output filename without extension (default: grepapk_scan)
-   -v, --verbose            Enable verbose output
-
-📝 **EXAMPLES:**
-   # Quick framework analysis
-   python grepapk.py -d /path/to/apk -T -v
-
-   # AI vulnerability scan (default)
-   python grepapk.py -d /path/to/apk -F --ai-only -v
-
-   # Full scan with all methods
-   python grepapk.py -d /path/to/apk -F --all-methods -v
-
-   # RASP protection analysis
-   python grepapk.py -d /path/to/apk --rasp-only -v
-
-🔍 **VULNERABILITY CATEGORIES:**
-   • Insecure Data Storage
-   • Insecure Inter-Component Communication (ICC)
-   • Insecure WebView Usage
-   • Hardcoded Secrets
-   • Insecure Network Communication
-   • Input Validation & Code Injection
-   • Code & Debug Configuration Issues
-   • Side-Channel & Leakage Issues
-   • Insecure Third-Party SDK Usage
-   • Poor Local Authentication & Session Handling
-   • Root Detection & Jailbreak Detection Bypass
-   • SSL Pinning Implementation & Bypass
-
-💡 **TIPS:**
-   • AI scanning is enabled by default for comprehensive analysis
-   • Use --regex-only for fastest results without AI processing
-   • Use -v for detailed progress information
-   • All scans now include detailed exploitation scenarios
-
-📚 **For more information, visit: https://github.com/heshamm1/grepapk**
-"""
+        """Display just the banner logo."""
+        help_text = f"""{self._get_logo_from_file()}"""
         print(help_text)
     
     @staticmethod

@@ -277,11 +277,13 @@ class GrepAPKController:
             raise
 
 def show_custom_help(ctx, param, value):
-    """Custom help callback that displays the banner logo."""
+    """Custom help callback that displays the banner logo first, then click help."""
     if not value or ctx.resilient_parsing:
         return
     help_banner = HelpBanner()
     help_banner.show_help()
+    # Now show the click help
+    click.echo(ctx.get_help())
     ctx.exit()
 
 @click.command()
