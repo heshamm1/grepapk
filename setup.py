@@ -8,7 +8,6 @@ from setuptools import setup, find_packages
 import os
 import re
 
-# Read the README file for long description
 def read_readme():
     """Read README.md file for long description."""
     try:
@@ -17,23 +16,19 @@ def read_readme():
     except FileNotFoundError:
         return "Android APK Security Scanner with AI-powered vulnerability detection"
 
-# Read version from banner.txt
 def get_version():
     """Extract version from banner.txt file."""
     try:
         with open("banner.txt", "r", encoding="utf-8") as fh:
             content = fh.read()
-            # Look for version pattern like "v3.0" or "Version: 3.0"
             version_match = re.search(r'[Vv]ersion[:\s]*([0-9]+\.[0-9]+)', content)
             if version_match:
                 return version_match.group(1)
     except FileNotFoundError:
         pass
-    
-    # Default version if not found
+
     return "3.0.0"
 
-# Read requirements from requirements.txt
 def read_requirements():
     """Read requirements from requirements.txt file."""
     try:
