@@ -481,4 +481,4 @@ python -m pytest tests/
 
 **⚠️ Disclaimer**: This tool is for educational and security research purposes only. Always ensure you have proper authorization before scanning any applications.
 
-**Made with ❤️ by the @etchoo**
+**Made with ❤️ by the @heshamm1**
