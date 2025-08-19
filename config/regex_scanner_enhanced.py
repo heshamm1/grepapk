@@ -134,22 +134,17 @@ class EnhancedRegexScanner:
         """
         Simplified false positive detection that NEVER filters out ICC vulnerabilities.
         """
-        # NEVER filter out ICC vulnerabilities - they are always real
         if is_icc_vulnerability(category, subcategory):
             return False
-        
-        # For non-ICC vulnerabilities, apply minimal filtering
+
         line_lower = line_content.lower()
-        
-        # Skip obvious comments
+
         if line_content.strip().startswith('//') or line_content.strip().startswith('#'):
                 return True
-        
-        # Skip if it's clearly a false positive
+
         if any(word in line_lower for word in ['example', 'test', 'sample', 'demo', 'placeholder']):
                 return True
-        
-        # Check for safe security contexts (only for non-ICC)
+
         if self._has_safe_security_context(line_content, content, category):
                 return True
         
@@ -158,10 +153,8 @@ class EnhancedRegexScanner:
     def _has_safe_security_context(self, line_content: str, content: str, category: str) -> bool:
         """Check if the vulnerability has safe security context."""
         if category == 'insecure_icc':
-            # For ICC, only filter out if it's a legitimate export (MAIN/LAUNCHER)
             return self._is_legitimate_export(line_content, content)
         
-        # For other categories, check security indicators
         for indicator_type, patterns in self.security_indicators.items():
             for pattern in patterns:
                 if re.search(pattern, line_content, re.IGNORECASE):
@@ -171,17 +164,14 @@ class EnhancedRegexScanner:
     
     def _is_legitimate_export(self, line_content: str, content: str) -> bool:
         """Check if this is a legitimate exported component."""
-        # Main/Launcher activities are legitimately exported
         if ('android.intent.action.MAIN' in content and 
             'android.intent.category.LAUNCHER' in content and
             'android:exported="true"' in line_content):
                 return True
-        
-        # System components are safe
+
         if 'android:name="android.' in line_content:
                 return True
-        
-        # Components with proper permissions are safe
+
         if self._has_proper_permissions(line_content, content):
                 return True
         
@@ -206,21 +196,16 @@ class EnhancedRegexScanner:
                              category: str, subcategory: str, pattern: str, matched_text: str) -> Dict[str, Any]:
         """Create a vulnerability entry with enhanced information."""
         try:
-            # Extract package name and component name for accurate exploitation scenarios
             package_name, component_name = self._extract_package_and_component(file_path, line_content, category, line_number)
-            
-            # Generate detailed exploitation scenario with AI-like analysis
+
             exploitation_scenario = get_exploitation_scenario(category, subcategory, package_name, component_name)
-            
-            # Get vulnerability title and description
+
             title = get_vulnerability_title(category, subcategory)
             description = self._generate_vulnerability_description(category, subcategory, matched_text, line_content)
-            
-            # Determine severity and confidence
+
             severity = self._determine_severity(category, subcategory, matched_text)
             confidence_score = self._calculate_confidence_score(category, subcategory, matched_text, line_content)
             
-            # Create comprehensive vulnerability entry
             vulnerability = {
                 'discovered_vulnerability_title': title,
                 'discovered_vulnerable_class_and_line': {
@@ -258,7 +243,6 @@ class EnhancedRegexScanner:
         """Generates a more detailed description for the vulnerability."""
         base_description = get_vulnerability_title(category, subcategory)
         
-        # Add specific details from the matched text
         if 'android:exported="true"' in matched_text:
             base_description += " (exported component)"
         if 'android:permission' in matched_text:
@@ -277,8 +261,7 @@ class EnhancedRegexScanner:
             base_description += " (with network security config)"
         if 'android:usesCleartextTraffic="false"' in matched_text:
             base_description += " (with cleartext traffic)"
-        
-        # Add context from the line content if available
+
         if 'android:name=' in line_content:
             base_description += f" in {line_content.strip()}"
         
@@ -288,8 +271,7 @@ class EnhancedRegexScanner:
         """Assesses the security impact of a vulnerability."""
         if is_icc_vulnerability(category, subcategory):
             return "High"
-        
-        # For non-ICC vulnerabilities, use a simple heuristic
+
         if 'hardcoded_secrets' in category:
             return "High"
         if 'insecure_webview' in category:
@@ -321,13 +303,10 @@ class EnhancedRegexScanner:
         component_name = "MainActivity"    # Default fallback
         
         try:
-            # Try to extract package name from AndroidManifest.xml
             if "AndroidManifest.xml" in str(file_path):
-                # Read the entire manifest file to get package name
                 try:
                     with open(file_path, 'r', encoding='utf-8', errors='ignore') as f:
                         manifest_content = f.read()
-                        # Look for package attribute in the manifest
                         package_match = re.search(r'package="([^"]+)"', manifest_content)
                         if package_match:
                             package_name = package_match.group(1)
@@ -336,21 +315,17 @@ class EnhancedRegexScanner:
                 except Exception as e:
                     if self.verbose:
                         print(f"⚠️ Could not read AndroidManifest.xml: {e}")
-                
-                # Look for component names (activities, services, etc.)
+
                 if category == 'insecure_icc':
-                    # Read the entire manifest to find the component name for this specific line
                     try:
                         with open(file_path, 'r', encoding='utf-8', errors='ignore') as f:
                             manifest_lines = f.readlines()
-                            # Look for the component declaration around the current line
                             for i in range(max(0, line_number - 5), min(len(manifest_lines), line_number + 5)):
                                 line = manifest_lines[i]
                                 if 'android:name=' in line:
                                     component_match = re.search(r'android:name="([^"]+)"', line)
                                     if component_match:
                                         full_component = component_match.group(1)
-                                        # Extract just the class name, not the full package path
                                         component_name = full_component.split('.')[-1]
                                         if self.verbose:
                                             print(f"🔧 Extracted component: {component_name}")
@@ -359,7 +334,6 @@ class EnhancedRegexScanner:
                         if self.verbose:
                             print(f"⚠️ Could not read manifest for component extraction: {e}")
                     
-                    # Fallback: try to extract from current line if it contains android:name
                     if component_name == "MainActivity" and 'android:name=' in line_content:
                         component_match = re.search(r'android:name="([^"]+)"', line_content)
                         if component_match:
@@ -368,7 +342,6 @@ class EnhancedRegexScanner:
                             if self.verbose:
                                 print(f"🔧 Extracted component from current line: {component_name}")
                 
-                # For non-ICC vulnerabilities, try to extract component from current line
                 else:
                     if 'android:name=' in line_content:
                         component_match = re.search(r'android:name="([^"]+)"', line_content)
@@ -378,14 +351,12 @@ class EnhancedRegexScanner:
                             if self.verbose:
                                 print(f"🔧 Extracted component for non-ICC: {component_name}")
             
-            # For Java/Kotlin files, try to extract class name from file path
             elif file_path.suffix in ['.java', '.kt']:
                 # Extract class name from file path
                 component_name = file_path.stem
                 if self.verbose:
                     print(f"🔧 Extracted component from file path: {component_name}")
                 
-                # Try to find package name from file content
                 try:
                     with open(file_path, 'r', encoding='utf-8', errors='ignore') as f:
                         content = f.read()
