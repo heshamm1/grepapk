@@ -17,10 +17,9 @@ include *.json
 
 # Include pattern files
 include config/vulnerability_patterns*.py
-include config/false_positive_config.py
 
 # Include scanner files
-include config/regex_scanner*.py
+include config/regex_scanner_enhanced.py
 include config/ai_scanner.py
 
 # Include utility files
@@ -31,6 +30,7 @@ include config/help_banner.py
 include config/grepapk_main.py
 include config/ai_vulnerability_detector.py
 include config/__init__.py
+include config/rasp_detector.py
 
 # Include test files
 recursive-include tests *.py

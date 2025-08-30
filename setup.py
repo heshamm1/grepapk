@@ -49,8 +49,6 @@ def read_requirements():
         return [
             "click>=8.0.0",
             "pathlib2>=2.3.0",
-            "concurrent-futures>=3.1.1",
-            "typing-extensions>=4.0.0",
             "colorama>=0.4.4",
             "rich>=12.0.0",
             "tqdm>=4.64.0"
@@ -77,17 +75,15 @@ setup(
         "Documentation": "https://github.com/grepapk/grepapk/blob/main/README.md",
         "Security": "https://github.com/grepapk/grepapk/security/policy",
     },
-    packages=find_packages(include=["*"]),
+    packages=find_packages(),
     py_modules=[
         "config.grepapk_main",
         "config.vulnerability_patterns",
-        "config.vulnerability_patterns_improved", 
-        "config.regex_scanner",
         "config.regex_scanner_enhanced",
         "config.ai_scanner",
         "config.output_manager",
         "config.help_banner",
-        "config.false_positive_config"
+        "config.rasp_detector"
     ],
     classifiers=[
         "Development Status :: 5 - Production/Stable",
@@ -175,14 +171,12 @@ setup(
             "config/__init__.py",
             "config/grepapk_main.py",
             "config/ai_vulnerability_detector.py",
-            "config/false_positive_config.py"
+            "config/rasp_detector.py"
         ]),
         ("share/grepapk/config/patterns", [
-            "config/vulnerability_patterns.py",
-            "config/vulnerability_patterns_improved.py"
+            "config/vulnerability_patterns.py"
         ]),
         ("share/grepapk/config/scanners", [
-            "config/regex_scanner.py",
             "config/regex_scanner_enhanced.py",
             "config/ai_scanner.py"
         ]),

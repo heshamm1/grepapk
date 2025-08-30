@@ -4,7 +4,7 @@ GrepAPK Configuration Package
 Consolidated vulnerability scanning and detection system.
 """
 
-__version__ = "3.0"
+__version__ = "3.0.0"
 __author__ = "GrepAPK Security Team"
 __description__ = "Android APK Security Scanner with AI and Regex Detection"
 

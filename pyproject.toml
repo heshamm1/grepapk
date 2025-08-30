@@ -52,8 +52,6 @@ requires-python = ">=3.8"
 dependencies = [
     "click>=8.0.0",
     "pathlib2>=2.3.0; python_version<'3.4'",
-    "concurrent-futures>=3.1.1; python_version<'3.2'",
-    "typing-extensions>=4.0.0; python_version<'3.8'",
     "colorama>=0.4.4",
     "rich>=12.0.0",
     "tqdm>=4.64.0",
@@ -111,26 +109,22 @@ grepapk = "config.grepapk_main:main"
 grepapk-scan = "config.grepapk_main:main"
 
 [project.entry-points."grepapk.scanners"]
-regex = "regex_scanner:RegexScanner"
 enhanced_regex = "regex_scanner_enhanced:EnhancedRegexScanner"
 ai = "ai_scanner:AIScanner"
 
 [project.entry-points."grepapk.patterns"]
 vulnerability = "vulnerability_patterns:get_patterns"
-improved = "vulnerability_patterns_improved:get_patterns"
 
 [tool.setuptools]
 packages = ["grepapk", "config"]
 py-modules = [
     "config.grepapk_main",
     "config.vulnerability_patterns",
-    "config.vulnerability_patterns_improved",
-    "config.regex_scanner",
     "config.regex_scanner_enhanced",
     "config.ai_scanner",
     "config.output_manager",
     "config.help_banner",
-    "config.false_positive_config"
+    "config.rasp_detector"
 ]
 
 [tool.setuptools.package-data]
@@ -146,14 +140,12 @@ py-modules = [
     "config/__init__.py",
     "config/grepapk_main.py",
     "config/ai_vulnerability_detector.py",
-    "config/false_positive_config.py"
+    "config/rasp_detector.py"
 ]
 "share/grepapk/config/patterns" = [
-    "config/vulnerability_patterns.py",
-    "config/vulnerability_patterns_improved.py"
+    "config/vulnerability_patterns.py"
 ]
 "share/grepapk/config/scanners" = [
-    "config/regex_scanner.py",
     "config/regex_scanner_enhanced.py",
     "config/ai_scanner.py"
 ]

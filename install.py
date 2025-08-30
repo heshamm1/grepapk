@@ -102,15 +102,15 @@ def verify_installation():
     
     try:
         # Try to import main modules
-        import grepapk_main
-        import vulnerability_patterns
-        import regex_scanner
-        import output_manager
+        import config.grepapk_main
+        import config.vulnerability_patterns
+        import config.regex_scanner_enhanced
+        import config.output_manager
         
         print("✅ Core modules imported successfully")
         
         # Try to run help
-        result = subprocess.run([sys.executable, "grepapk_main.py", "--help"], 
+        result = subprocess.run([sys.executable, "-m", "config.grepapk_main", "--help"], 
                               capture_output=True, text=True, timeout=10)
         
         if result.returncode == 0:
