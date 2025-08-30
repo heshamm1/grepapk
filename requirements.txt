@@ -16,4 +16,3 @@ tqdm>=4.64.0
 # Additional utilities
 requests>=2.25.0
 regex>=2021.0.0
-

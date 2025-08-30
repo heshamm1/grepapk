@@ -13,7 +13,7 @@ from pathlib import Path
 def print_banner():
     """Print GrepAPK installation banner."""
     print("🔍" + "="*60 + "🔍")
-    print("🚀           GrepAPK v3.0 Installation Script           🚀")
+    print("🚀           GrepAPK Installation Script           🚀")
     print("🔍" + "="*60 + "🔍")
     print()
     print("📱 Android APK Security Scanner with AI-powered Analysis")

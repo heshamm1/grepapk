@@ -10,7 +10,7 @@ from typing import List, Dict, Any, Optional
 from datetime import datetime
 import threading
 from concurrent.futures import ThreadPoolExecutor, as_completed
-import re # Added for lightweight scan
+import re
 
 logger = logging.getLogger(__name__)
 
@@ -23,8 +23,8 @@ class AIScanner:
         self.verbose = verbose
         self.vulnerabilities = []
         self.vulnerabilities_lock = threading.Lock()
-        self._processed_files = set()  # Cache for processed files
-        self._model_cache = {}  # Cache for model outputs
+        self._processed_files = set()
+        self._model_cache = {} 
         
     def is_available(self) -> bool:
         """Check if AI detection is available."""
@@ -37,7 +37,6 @@ class AIScanner:
                 print("⚠️  AI detection not available, skipping AI scan")
             return []
         
-        # Convert string to Path if needed
         if isinstance(target_path, str):
             target_path = Path(target_path)
         
@@ -45,7 +44,6 @@ class AIScanner:
             print("🤖 Starting AI-powered vulnerability detection...")
         
         try:
-            # Get all source files for AI analysis
             source_files = self._get_source_files(target_path)
             
             if self.verbose:
@@ -61,7 +59,6 @@ class AIScanner:
                 if self.verbose:
                     print(f"🤖 Processing AI batch {i//batch_size + 1}/{(total_files + batch_size - 1)//batch_size}")
                 
-                # Process batch with AI detector
                 self._process_ai_batch(batch_files, max_workers, timeout)
             
             if self.verbose:
@@ -76,15 +73,12 @@ class AIScanner:
     
     def _process_ai_batch(self, batch_files: List[Path], max_workers: int, timeout: int) -> None:
         """Process a batch of files with optimized AI detection."""
-        # OPTIMIZATION: Use more workers for better parallelization
         with ThreadPoolExecutor(max_workers=max_workers) as executor:
-            # Submit all files in batch for AI analysis
             future_to_file = {
                 executor.submit(self._analyze_single_file, file_path): file_path 
                 for file_path in batch_files
             }
-            
-            # Process completed analyses with better error handling
+
             for future in as_completed(future_to_file):
                 file_path = future_to_file[future]
                 try:
@@ -96,7 +90,6 @@ class AIScanner:
     def _analyze_single_file(self, file_path: Path) -> None:
         """Analyze a single file using comprehensive AI detection."""
         try:
-            # Skip if already processed
             if file_path in self._processed_files:
                 return
             
@@ -109,18 +102,14 @@ class AIScanner:
                     logger.warning(f"Could not read {file_path}: {e}")
                 return
             
-            # Skip empty or very small files
             if len(content.strip()) < 10:
                 return
             
-            # Use AI detector if available
             if self.ai_detector:
                 try:
-                    # Perform comprehensive AI analysis
                     ai_vulnerabilities = self.ai_detector.analyze_code_file(file_path, content)
                     
                     if ai_vulnerabilities:
-                        # Convert AI assessments to vulnerability format
                         for ai_vuln in ai_vulnerabilities:
                             vuln = {
                                 'discovered_vulnerability_title': ai_vuln.description,
@@ -157,7 +146,6 @@ class AIScanner:
                     if self.verbose:
                         logger.error(f"AI analysis failed for {file_path}: {e}")
             
-            # Mark file as processed
             self._processed_files.add(file_path)
             
         except Exception as e:
@@ -166,31 +154,25 @@ class AIScanner:
     
     def _get_source_files(self, target_path: Path) -> List[Path]:
         """Get all source files for AI analysis with optimization."""
-        # OPTIMIZATION: Focus on most important file types first
         java_files = list(target_path.rglob("*.java")) + list(target_path.rglob("*.kt"))
         xml_files = list(target_path.rglob("*.xml"))
         smali_files = list(target_path.rglob("*.smali"))
         
-        # Combine and prioritize files
         all_source_files = java_files + xml_files + smali_files
         filtered_files = []
         
         for file_path in all_source_files:
             file_path_str = str(file_path)
             
-            # Skip build directories
             if any(build_dir in file_path_str for build_dir in ['build', 'bin', 'obj', 'target', 'out', 'dist']):
                 continue
             
-            # Skip test directories
             if any(test_dir in file_path_str for test_dir in ['test', 'tests', 'androidTest']):
                 continue
             
-            # Skip auto-generated files
             if any(generated in file_path_str for generated in ['R.java', 'BuildConfig.java', 'Manifest.java']):
                 continue
-            
-            # File size filtering for performance
+
             try:
                 max_size = 500 * 1024  # 500KB file size limit
                 if file_path.stat().st_size > max_size:
@@ -210,11 +192,9 @@ class AIScanner:
     def _add_ai_vulnerability(self, file_path: Path, assessment: Any) -> None:
         """Add AI-detected vulnerability to the list."""
         try:
-            # Map AI vulnerability type to our categories
             category = self._map_ai_vulnerability_type(assessment.vulnerability_type)
             subcategory = 'ai_detected'
             
-            # Create vulnerability entry
             vulnerability = {
                 'timestamp': datetime.now().isoformat(),
                 'file_path': str(file_path),
