@@ -327,12 +327,22 @@ VULNERABILITY CATEGORIES:
     def show_help(self):
         """Display just the banner logo."""
         help_text = f"""{self._get_logo_from_file()}"""
-        print(help_text)
+        try:
+            print(help_text)
+        except UnicodeEncodeError:
+            # Fallback for systems with limited Unicode support
+            import sys
+            if hasattr(sys.stdout, 'reconfigure'):
+                sys.stdout.reconfigure(encoding='utf-8')
+                print(help_text)
+            else:
+                # For older Python versions, encode manually
+                print(help_text.encode('utf-8', errors='replace').decode('utf-8'))
     
     @staticmethod
     def get_version() -> str:
         """Get the current version of GrepAPK."""
-        return "2.0"
+        return "3.0.0"
     
     @staticmethod
     def get_author() -> str:

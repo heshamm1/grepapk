@@ -19,7 +19,7 @@ def read_readme():
 def get_version():
     """Extract version from banner.txt file."""
     try:
-        with open("banner.txt", "r", encoding="utf-8") as fh:
+        with open("files/banner.txt", "r", encoding="utf-8") as fh:
             content = fh.read()
             version_match = re.search(r'[Vv]ersion[:\s]*([0-9]+\.[0-9]+)', content)
             if version_match:
@@ -158,7 +158,7 @@ setup(
     },
     data_files=[
         ("share/grepapk", [
-            "banner.txt",
+            "files/banner.txt",
             "README.md",
             "requirements.txt"
         ]),

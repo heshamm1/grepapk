@@ -133,7 +133,7 @@ py-modules = [
 
 [tool.setuptools.data-files]
 "share/grepapk" = [
-    "banner.txt",
+    "files/banner.txt",
     "README.md",
     "requirements.txt"
 ]
